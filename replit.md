@@ -1,15 +1,14 @@
-# [Project name]
+# Django Project
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+A basic Django 6 web project scaffolded with `django-admin startproject`.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Django dev server runs via the "Django Dev Server" workflow on port 8000
+- `cd django_project && python manage.py runserver 0.0.0.0:8000` — run manually
+- `cd django_project && python manage.py migrate` — apply database migrations
+- `cd django_project && python manage.py createsuperuser` — create an admin user
+- `cd django_project && python manage.py startapp <name>` — add a new app
 
 ## Stack
 
