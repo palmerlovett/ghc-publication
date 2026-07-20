@@ -1,0 +1,26 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Home | Django Project{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <h1>Welcome to your Django project</h1>
+    <p>This is your homepage, rendered from a template. The base layout, URL routing, and static files are all wired up and ready to build on.</p>
+    <a href="{% url 'core:about' %}" class="button">Learn more</a>
+</section>
+
+<section class="features">
+    <div class="feature">
+        <h2>Templates</h2>
+        <p>Pages extend a shared base layout with a header, navigation, and footer.</p>
+    </div>
+    <div class="feature">
+        <h2>URL Routing</h2>
+        <p>The <code>core</code> app owns its routes, included from the project URLconf.</p>
+    </div>
+    <div class="feature">
+        <h2>Static Files</h2>
+        <p>CSS is served from the app's static directory using Django staticfiles.</p>
+    </div>
+</section>
+{% endblock %}

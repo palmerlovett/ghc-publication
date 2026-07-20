@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+
+{% block title %}About | Django Project{% endblock %}
+
+{% block content %}
+<section class="page">
+    <h1>About</h1>
+    <p>This project is a starting point for building with Django. It includes:</p>
+    <ul>
+        <li>A <strong>core</strong> app for views, URLs, and templates</li>
+        <li>A shared base template that all pages extend</li>
+        <li>App-level URL routing included from the project URLconf</li>
+        <li>Static file handling for stylesheets and assets</li>
+    </ul>
+    <p>Add new pages by creating a view, a template that extends the base layout, and a URL pattern in <code>core/urls.py</code>.</p>
+</section>
+{% endblock %}
