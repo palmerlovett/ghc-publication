@@ -24,4 +24,4 @@ A Django 6 web project. The root of the repo is the Django project root (`manage
 
 ## User preferences
 
-_Populate as you build._
+- User manages default templates themselves, inside `django_project/` (no separate app for them).
