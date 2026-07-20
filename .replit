@@ -24,13 +24,13 @@ args = "Django Dev Server"
 name = "Django Dev Server"
 author = "agent"
 
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "cd django_project && python manage.py runserver 0.0.0.0:8000"
-waitForPort = 8000
-
 [workflows.workflow.metadata]
 outputType = "webview"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python manage.py runserver 0.0.0.0:8000"
+waitForPort = 8000
 
 [agent]
 stack = "PNPM_WORKSPACE"
