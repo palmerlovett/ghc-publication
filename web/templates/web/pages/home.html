@@ -1,7 +1,129 @@
 {% extends "web/ghc.html" %}
 {% block content %}
-<div class="container {{ pageclass }}">
-  <h2>{{ title }}</h2>
-  <p>{{ desc }}</p>
+<div class="slider">
+    <div class="slide-nav" id="prev-click">
+      <i class="fa fa-chevron-left"></i>
+    </div>
+    <div id="next-click" class="slide-nav">
+      <i class="fa fa-chevron-right"></i>
+    </div>
+    <div class="fiveslides" style="left: 0%" id="slider">
+      <div class="slide one">
+        <img src="/assets/slides/paper-plans.jpg">
+        <div class="container">
+          <div class="slide-content">
+            <h2>Guy Hopkins Construction</h2>
+            <h4 class="sub">The foundation of our company is built on solid relationships.</h4>
+            <p>The successful experience of GHC in multiple types of construction enables the
+            <br> company to provide owners with a broad base of solutions to meet the
+            <br> construction project requirements. 
+            </p>
+            <a href="/contact-us" class="button solid">Contact Us</a>
+            <a href="/projects" class="button">Projects</a>
+          </div>
+        </div>
+      </div>
+      <div class="slide two">
+        <img src="/assets/slides/zhspa-auditorium.jpg">
+        <div class="container">
+          <div class="slide-content">
+            <h2>Performing Arts Auditorium</h2>
+            <h4 class="sub">Zachary High School Community School Board</h4>
+            <p>This facility was designed and built around the idea of giving students
+            <br> the best opportunities and resources to excel in art, music, and choir.
+            </p>
+            <a href="/contact-us" class="button solid">Contact Us</a>
+            <a href="/projects" class="button">Projects</a>
+          </div>
+        </div>
+      </div>
+      <div class="slide three">
+        <img src="/assets/slides/rpcc.jpg">
+        <div class="container">
+          <div class="slide-content">
+            <h2>RPCC</h2>
+            <h4 class="sub">Louisiana Community and Technical College System</h4>
+            <p>A two-story building with 71,000 sf of educational space on the first floor
+            <br> and 17,000 sf. of administration and college staff offices on the second floor.
+            </p>
+            <a href="/contact-us" class="button solid">Contact Us</a>
+            <a href="/projects" class="button">Projects</a>
+          </div>
+        </div>
+      </div>
+      <div class="slide four">
+        <img src="/assets/slides/iberville-parish-veterans-memorial.jpg">
+        <div class="container">
+          <div class="slide-content">
+            <h2>Iberville Veterans' Memorial</h2>
+            <h4 class="sub">Iberville Parish Council</h4>
+            <p>The award-winning design and construction effort featured an elevated concrete plaza memorializing 
+            <br> all of the major U.S. wars, including retaining walls, reflective ponds, water feature, war monuments, 
+            <br> bronze plaques and a wall of Litracon (light-transmitting-concrete) block, which was sourced from Hungary.
+            </p>
+            <a href="/contact-us" class="button solid">Contact Us</a>
+            <a href="/projects" class="button">Projects</a>
+          </div>
+        </div>
+      </div>
+      <div class="slide five">
+        <img src="/assets/slides/eden-park-library.jpg">
+        <div class="container">
+          <div class="slide-content">
+            <h2>Eden Park Library</h2>
+            <h4 class="sub">City of Baton Rouge/Parish of East Baton Rouge</h4>
+            <p>A state-of-the-art library for the East Baton Rouge Parish Library Board, the 14,000 sf project
+            <br> featured beautiful glass curtain-walls, decorative masonry, architectural canopies and a
+            <br> mechanical system designed for library-specific requirements.
+            </p>
+            <a href="/contact-us" class="button solid">Contact Us</a>
+            <a href="/projects" class="button">Projects</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <h3 class="dark-banner">Projects</h3>
+  <ul class="projects">
+    <li>
+      <a href="/projects/zhspa-auditorium">
+        <img src="/projects/images/zhspa-auditorium.jpg" alt="Zachary High School Performing Arts Auditorium">
+        <h4>Performing Arts Auditorium</h4>
+      </a>
+    </li>
+    <li>
+      <a href="/projects/river-parishes-community-college">
+        <img src="/projects/images/river-parishes-community-college.jpg" alt="River Parish Community College">
+        <h4>River Parishes Community College</h4>
+      </a>
+    </li>
+    <li>
+      <a href="/projects/cecilia-highschool">
+        <img src="/projects/images/cecilia-highschool.jpg" alt="Cecilia High School">
+        <h4>Cecilia High School</h4>
+      </a>
+    </li>
+    <li>
+      <a href="/projects/gw-carver-primary-school">
+        <img src="/projects/images/gw-carver-primary-school.jpg" alt="G.W. Carver Primary School">
+        <h4>G.W. Carver Primary School</h4>
+      </a>
+    </li>
+    <li>
+      <a href="/projects/delgado-community-college" alt="Delgado Community College">
+        <img src="/projects/images/delgado-community-college.jpg">
+        <h4>Delgado Community College</h4>
+      </a>
+    </li>
+  </ul>
 </div>
+<div class="home-services">
+  <img src="/assets/img/construction-project.jpg" alt="Construction Project">
+  <div class="text">
+    <h2>Safety, Quality, Integrity</h2>
+    <a class="button dark center large" href="/services">Services</a>
+  </div>
+</div>
+
+<script src="/assets/js/slider.js" type="text/javascript"></script>
 {% endblock %}

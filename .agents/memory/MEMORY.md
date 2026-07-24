@@ -1,0 +1,1 @@
+- [Task scope discipline](task-scope-discipline.md) — do exactly what the user asked; no extra routes/templates/fixes, and never edit their templates unasked.
