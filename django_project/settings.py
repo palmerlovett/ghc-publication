@@ -92,7 +92,7 @@ STORAGES = {
 }
 
 GS_BUCKET_NAME = 'ghc-media'
-MEDIA_URL = '/media'
+MEDIA_URL = '/media/'
 
 
 # Password validation
