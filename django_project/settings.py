@@ -89,6 +89,9 @@ STORAGES = {
           
         },
     },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
 }
 
 GS_BUCKET_NAME = 'ghc-media'
