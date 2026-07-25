@@ -27,6 +27,7 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
+#args = "gunicorn django_project.wsgi:application --bind 0.0.0.0:8000 --reload"
 args = "python manage.py runserver 0.0.0.0:8000"
 waitForPort = 8000
 
