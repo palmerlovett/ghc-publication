@@ -3,10 +3,8 @@ modules = ["nodejs-24", "python-base-3.13"]
 [deployment]
 router = "application"
 deploymentTarget = "autoscale"
-
-[deployment.postBuild]
-args = ["pnpm", "store", "prune"]
-env = { "CI" = "true" }
+run = ["gunicorn", "django_project.wsgi:application", "--bind", "0.0.0.0:8000"]
+build = ["python", "manage.py", "collectstatic", "--noinput"]
 
 [workflows]
 runButton = "Project"
