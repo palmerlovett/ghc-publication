@@ -5,7 +5,7 @@ def home(request):
     context = {
         'title': 'Home',
         'desc': 'Welcome to Guy Hopkins Construction Co., Inc.',
-        'pageclass': 'home',
+        'pageclass': 'homepage',
     }
     return render(request, 'web/pages/home.html', context)
 

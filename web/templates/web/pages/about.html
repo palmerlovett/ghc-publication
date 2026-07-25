@@ -1,4 +1,5 @@
 {% extends "web/ghc.html" %}
+{% load static %}
 {% block content %}
 <div class="content-subhead">
   <div class="container">
@@ -25,13 +26,13 @@
     <div class="half">
       <div class="flex-halfs allscreens">
         <div class="half profile">
-          <img src="images/guy-hopkins.jpg" alt="Guy Hopkins">
+          <img src="{% static 'about/images/guy-hopkins.jpg' %}" alt="Guy Hopkins">
           <h3>H. Guy Hopkins, III</h3>
           <h4 class="sub">President</h4>
           <p>Established GHC and has a reputation for delivering construction projects with the highest level of integrity and responsiveness. </p>
         </div>
         <div class="half profile">
-          <img src="images/collette-lambert.jpg" alt="Collette Lambert">
+          <img src="{% static 'about/images/collette-lambert.jpg' %}" alt="Collette Lambert">
           <h3>Collette Lambert</h3>
           <h4 class="sub">Vice President/CFO</h4>
           <p>As CFO, Collette has oversight responsibility for all accounting, human resource, technology, policy and risk management functions.</p>
