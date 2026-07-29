@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import dj_database_url
+import os
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -25,8 +28,12 @@ SECRET_KEY = 'django-insecure-2bl)z%0tv16ukb-4!juocfiuw7-#5g-3m464jm%=981h+c=wg5
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev",
+                 "147.182.128.153"]
 
+
+CSRF_TRUSTED_ORIGINS = ["https://0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev",
+                        "http://147.182.128.153"]
 
 # Application definition
 
@@ -38,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'web',
+    'projects',
 ]
 
 MIDDLEWARE = [
@@ -74,13 +82,15 @@ WSGI_APPLICATION = 'django_project.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
 
+
+DATABASES = {
+  'default': dj_database_url.parse(
+    os.environ['PRODUCTION_DB_URL'],
+    conn_max_age=600,
+    conn_health_checks=True,
+  ),
+}
 
 STORAGES = {
     "default": {

@@ -1,0 +1,358 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"client",
+				"clientY"
+			],
+			[
+				"clientP",
+				"clientPosY"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"contents": "from django.db import models\n\n# Create your models here.\n\nclass Album(models.Model):\n  album_id = models.AutoField(primary_key=True)\n  title = models.CharField(max_length=100)\n  slug = models.CharField(max_length=100, blank=True,null=True)\n  desc = models.TextField(blank=True, default=\"\")\n  cover_url = models.CharField(max_length=100, null=True, blank=True)\n  time_period = models.DateField(blank=True, default=\"\")\n  listed = models.BooleanField(default=True)\n  restricted = models.BooleanField(default=False)\n\n\n  class Meta:\n    ordering = ['-time_period']\n\n  def save(self, *args, **kwargs):\n    from django.utils.text import slugify\n    if not self.slug:\n      self.slug = slugify(self.title)\n    super().save(*args, **kwargs)\n  def __str__(self):\n    return self.title\n\nclass Photo(models.Model):\n  photo_id = models.AutoField(primary_key=True)\n\n  album = models.ForeignKey('photo_book.Album', on_delete=models.SET_NULL, null=True)\n\n  title = models.CharField(max_length=100, blank=True)\n  desc = models.TextField(blank=True, default=\"\")\n  image = models.ImageField(upload_to='photos/', blank=True)\n  thumbnail = models.ImageField(upload_to='photos/thumbs/', blank=True)\n  date_taken = models.DateField(blank=True, null=True)\n\n  original_filename = models.CharField(max_length=255, blank=True)\n  new_filename = models.CharField(max_length=255, blank=True)\n\n\n  class Meta:\n    ordering = ['photo_id']\n\n  def delete(self, *args, **kwargs):\n    from django_project.storage import ReplitObjectStorage\n    import os\n\n    storage = ReplitObjectStorage()\n\n    # Remove main image from object storage\n    if self.image:\n      print(\"file to delete (self.image.name): \"+self.image.name)\n      try:\n          storage.delete_file(self.image.name)\n      except Exception as e:\n          print(f\"Error deleting file {self.image.name}: {str(e)}\")\n          pass  # Consider logging the error or handling it more gracefully\n\n    # Remove thumbnail from object storage\n    if self.thumbnail:\n      storage.delete_file(os.path.join('thumbs', os.path.basename(self.thumbnail.name)))\n\n    # Proceed with the default delete operation\n    super().delete(*args, **kwargs)\n\n\n  def save(self, *args, **kwargs):\n    from PIL import Image\n    import os\n    import io\n    from django.utils.text import slugify\n    from django_project import settings\n    from photo_book.utils import extract_number\n    import re\n    from django_project.storage import ReplitObjectStorage\n\n    if not self.image:\n      return\n\n    # Initialize Replit Object Storage\n    storage = ReplitObjectStorage() #claudes object, rewrite someday?\n\n    # Customize filename before saving\n    if self.image:\n      image_namepath = self.image.name\n      print(f\"image_namepath.partition('/')[0]::: {image_namepath.partition('/')[0]}\")\n      if (image_namepath.partition('/')[0] == 'photos'):\n        resave = True #filename is sanitized\n      else: resave = False\n\n      print(f'resave:{resave}')\n\n      ext = os.path.splitext(self.image.name)[1]\n      album_name = slugify(self.album.title) if self.album else \"uncategorized\"\n\n      #check if there is no title\n      if self.title and self.title.strip() != '':\n        # recreate filename from title\n        new_filename = f'{album_name}_{slugify(self.title)}{ext}' \n        print(f\"has title, use title to create file name\\n\")\n      else: #create a new filename from the uploaded file name and album title\n        print(f'has no title, create from filename\\n')\n        print(f\"image_namepath: {image_namepath}\")\n        image_basename = os.path.basename(image_namepath)\n        print(f\"image_basename: {image_basename}\")\n        if '_' in image_basename:\n            based_basename = image_basename.rsplit('_', 1)[1]\n        else:\n            based_basename = image_basename\n        print(f\"based_basename: {based_basename}\")\n\n        # Extract only the first number from the right\n        self.original_filename = re.search(r'\\d+(?!.*\\d)', based_basename).group() if re.search(r'\\d+(?!.*\\d)', based_basename) else ''\n        print(f'self.original_filename: {self.original_filename}')\n\n        bare_basename = os.path.splitext(based_basename)[0] #take filename from path\n        if len(re.sub(r'\\d', '', bare_basename)) > 3:\n            bare_basename = re.sub(r'\\d', '', bare_basename)  # remove all numbers only if result is longer than 3 chars\n        else: print(f'did not remove numbers title too short')\n\n        bare_basename = bare_basename.strip() #leading/trailing spaces\n\n        print(f\"bare_basename: {bare_basename}\\n\")\n\n        new_basename = bare_basename.replace('  ', '').replace('-', ' ') #replace double spaces and dashes\n        print(f\"new_basename: {new_basename}\")\n\n        new_title_name = new_basename.title()\n\n        new_basename = new_basename.replace(' ', '-').replace('_', '-').lower() #replaces remaining dashes with spaces\n        print(f\"new_basename (after:.replace(' ', '-').replace('_', '-').lower()): {new_basename}\\n\")\n\n        new_filename = f\"{album_name}_{new_basename}{ext}\"\n        self.title = new_title_name\n\n        print(f\"\\n\\nnew_filename: {new_filename}\\n\\n\")\n\n      # Save the desired filename\n      self.new_filename = new_filename\n\n      # Get the old image and thumbnail paths\n      try:\n          old_photo = Photo.objects.get(pk=self.pk)\n          old_image_path = old_photo.image.name\n          old_thumb_path = old_photo.thumbnail\n      except Photo.DoesNotExist:\n          old_image_path = None\n          old_thumb_path = None\n\n      # Handle file saving with object storage\n      if hasattr(self.image, 'file'):\n        file_content = self.image.file.read()\n        #self.image.file.seek(0)  # Reset file pointer after reading\n\n        # Set the image field to our exact path\n        image_path = f\"photos/{new_filename}\"\n\n        # Delete old files if the path changed\n        if old_image_path and old_image_path != image_path:\n          print(f\"Deleting old image at path: {old_image_path}\")\n          try:\n            storage.delete_file(old_image_path)\n          except Exception as e:\n            print(f\"Error deleting old image {old_image_path}: {str(e)}\")\n\n        if old_thumb_path:\n          print(f\"Deleting old thumbnail at path: {old_thumb_path}\")\n          try:\n            storage.delete_file(old_thumb_path)\n          except Exception as e:\n            print(f\"Error deleting old thumbnail {old_thumb_path}: {str(e)}\")\n\n        self.image.name = image_path\n\n        # Upload to object storage\n        storage.upload_content(file_content, image_path)\n\n        # Don't let Django process the file again when we call super().save()\n        self.image._committed = True\n\n    # Call parent save\n    super().save(*args, **kwargs)\n\n    # Process the image (make a copy for manipulation)\n    image_data = storage.download_content(self.image.name, as_text=False)\n    img = Image.open(io.BytesIO(image_data))\n\n    # Get EXIF data including date and orientation\n    try:\n      if hasattr(img, '_getexif'):\n        exif = img._getexif()\n        if exif is not None:\n          # Handle orientation\n          orientation = exif.get(274)  # 274 is the orientation tag\n          if orientation == 3:\n            img = img.rotate(180, expand=True)\n          elif orientation == 6:\n            img = img.rotate(270, expand=True)\n          elif orientation == 8:\n            img = img.rotate(90, expand=True)\n\n          # Get date taken - tag 36867 is 'DateTimeOriginal'\n          if 36867 in exif:\n            from datetime import datetime\n            date_str = exif[36867]\n            # Convert EXIF date format (YYYY:MM:DD HH:MM:SS) to Django date\n            self.date_taken = datetime.strptime(date_str, '%Y:%m:%d %H:%M:%S').date()\n    except:\n      pass  # If EXIF processing fails, continue with original image\n\n    # Resize main photo if larger than max dimensions\n    max_size = (1920, 1080)\n    if img.size[0] > max_size[0] or img.size[1] > max_size[1]:\n      img.thumbnail(max_size, Image.LANCZOS)\n\n    # Save processed image to object storage\n    sanitized_name = new_filename\n    processed_path = f\"photos/{sanitized_name}\"\n\n    # Convert PIL image to bytes\n    img_byte_arr = io.BytesIO()\n    img.save(img_byte_arr, format=img.format or 'JPEG', quality=85, optimize=True)\n    img_byte_arr.seek(0)\n\n    # Upload processed image to object storage\n    storage.upload_content(img_byte_arr.getvalue(), processed_path)\n\n    # Create thumbnail\n    thumb_img = img.copy()\n    thumb_size = (200, 200)\n    thumb_img.thumbnail(thumb_size, Image.LANCZOS)\n\n    # Convert thumbnail to bytes\n    thumb_byte_arr = io.BytesIO()\n    thumb_img.save(thumb_byte_arr, format=img.format or 'JPEG', quality=85, optimize=True)\n    thumb_byte_arr.seek(0)\n\n    # Use the clean filename without random strings\n    base_filename = os.path.basename(self.image.name)\n    thumb_filename = f'thumb_{base_filename}'\n    thumb_path = f\"thumbs/{thumb_filename}\"\n\n    # Upload thumbnail to object storage\n    storage.upload_content(thumb_byte_arr.getvalue(), thumb_path)\n\n    # Update thumbnail field - store the relative path for database\n    self.thumbnail = thumb_path\n    super().save(update_fields=['thumbnail', 'date_taken'])\n\n  def __str__(self):\n    return self.title",
+			"settings":
+			{
+				"buffer_size": 9209,
+				"line_ending": "Unix",
+				"name": "from django.db import models"
+			},
+			"undo_stack":
+			[
+				[
+					3,
+					1,
+					"paste",
+					null,
+					"AQAAAAAAAAAAAAAAlRQAAAAAAAAAAAAA",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8L8"
+				],
+				[
+					7,
+					1,
+					"paste",
+					null,
+					"AQAAAAAAAAAAAAAA+SMAAAAAAACVFAAAZnJvbSBkamFuZ28uZGIgaW1wb3J0IG1vZGVscwpmcm9tIGRqYW5nby51dGlscy50ZXh0IGltcG9ydCBzbHVnaWZ5CgpjbGFzcyBUZW1wbGF0ZShtb2RlbHMuTW9kZWwpOgogIG5hbWUgPSBtb2RlbHMuQ2hhckZpZWxkKG1heF9sZW5ndGg9MTAwKQogIHRlbXBsYXRlX3BhdGggPSBtb2RlbHMuQ2hhckZpZWxkKG1heF9sZW5ndGg9MTAwKQogIAogIGRlZiBfX3N0cl9fKHNlbGYpOgogICAgcmV0dXJuIHNlbGYubmFtZQoKY2xhc3MgUGFydChtb2RlbHMuTW9kZWwpOgogIG5hbWUgPSBtb2RlbHMuQ2hhckZpZWxkKG1heF9sZW5ndGg9MTAwKQogIGh0bWwgPSBtb2RlbHMuVGV4dEZpZWxkKCkKCiAgZGVmIF9fc3RyX18oc2VsZik6CiAgICByZXR1cm4gc2VsZi5uYW1lCgogIGNsYXNzIE1ldGE6CiAgICBvcmRlcmluZyA9IFsibmFtZSJdCgpjbGFzcyBQYWdlKG1vZGVscy5Nb2RlbCk6CiAgbmFtZSA9IG1vZGVscy5DaGFyRmllbGQobWF4X2xlbmd0aD0xMDApCiAgdGl0bGUgPSBtb2RlbHMuQ2hhckZpZWxkKG1heF9sZW5ndGg9MTAwLCBibGFuaz1UcnVlLCBudWxsPVRydWUsIGRlZmF1bHQ9IiIpCiAgc2x1ZyA9IG1vZGVscy5DaGFyRmllbGQobWF4X2xlbmd0aD0xMDAsIGJsYW5rPVRydWUsIG51bGw9VHJ1ZSwgZGVmYXVsdD0iIikKICBmdWxsX3NsdWcgPSBtb2RlbHMuQ2hhckZpZWxkKG1heF9sZW5ndGg9MjUwLCBibGFuaz1UcnVlLCBudWxsPVRydWUsIGRlZmF1bHQ9IiIsIGVkaXRhYmxlPUZhbHNlKQoKICBwYWdlX2NsYXNzID0gbW9kZWxzLkNoYXJGaWVsZChtYXhfbGVuZ3RoPTEwMCwgYmxhbms9VHJ1ZSkKCiAgcGFyZW50X3BhZ2UgPSBtb2RlbHMuRm9yZWlnbktleSgnY21zLlBhZ2UnLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYmxhbms9VHJ1ZSwgbnVsbD1UcnVlLCBkZWZhdWx0PSIiLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb25fZGVsZXRlPW1vZGVscy5TRVRfTlVMTCkKCiAgZGVzYyA9IG1vZGVscy5UZXh0RmllbGQoYmxhbms9VHJ1ZSwgbnVsbD1UcnVlLCBkZWZhdWx0PSIiKQogIAogIGFydGljbGUgPSBtb2RlbHMuRm9yZWlnbktleSgnY2F0YWxvZy5BcnRpY2xlJywKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgYmxhbms9VHJ1ZSwgbnVsbD1UcnVlLCBkZWZhdWx0PSIiLAogICAgICAgICAgICAgICAgICAgICAgICAgICAgICBvbl9kZWxldGU9bW9kZWxzLlNFVF9OVUxMKQogIHB1YmxpY2F0aW9uX2xpc3RpbmcgPSBtb2RlbHMuRm9yZWlnbktleSgnY2F0YWxvZy5QdWJsaWNhdGlvbicsCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIGJsYW5rPVRydWUsIG51bGw9VHJ1ZSwKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgb25fZGVsZXRlPW1vZGVscy5TRVRfTlVMTCkKICAKICBpbWFnZXMgPSBtb2RlbHMuTWFueVRvTWFueUZpZWxkKCdwaG90b19ib29rLlBob3RvJywKICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBibGFuaz1UcnVlLCBkZWZhdWx0PSIiKQogIGh0bWwgPSBtb2RlbHMuVGV4dEZpZWxkKGRlZmF1bHQ9IiIsIGJsYW5rPVRydWUpCgogIGxhc3RfbW9kID0gbW9kZWxzLkRhdGVGaWVsZChudWxsPVRydWUsIGJsYW5rPVRydWUpCgogIGxpc3RlZCA9IG1vZGVscy5Cb29sZWFuRmllbGQoZGVmYXVsdD1UcnVlKQogIHB1YmxpYyA9IG1vZGVscy5Cb29sZWFuRmllbGQoZGVmYXVsdD1UcnVlKQogIHJlc3RyaWN0ZWQgPSBtb2RlbHMuQm9vbGVhbkZpZWxkKGRlZmF1bHQ9RmFsc2UpCgogIHBhZ2VfbGV2ZWwgPSBtb2RlbHMuSW50ZWdlckZpZWxkKGRlZmF1bHQ9MSwgZWRpdGFibGU9RmFsc2UpCgogIGRpc3BsYXlfbmFtZSA9IG1vZGVscy5DaGFyRmllbGQobWF4X2xlbmd0aD0yNTAsIGJsYW5rPVRydWUsIG51bGw9VHJ1ZSwgZGVmYXVsdD0iIiwgZWRpdGFibGU9RmFsc2UpCgogIGhpZGVfYXJ0aWNsZV9mb290ZXIgPSBtb2RlbHMuQm9vbGVhbkZpZWxkKGRlZmF1bHQ9RmFsc2UpCiAgCiAgZGVmIHNhdmUoc2VsZiwgKmFyZ3MsICoqa3dhcmdzKToKICAgIHByaW50KGYnXG5cbnNhdmluZyBwYWdlLi4uJykKI1NFVCBTTFVHUyBJRiBOT05FIEVYSVNUCiAgICBwcmludChmJ1xuOjpjaGVja2luZyBpZiBzbHVnIGFscmVhZHkgZXhpc3RzIGlmIG5vdCBtYWtlIG9uZSBmcm9tIHRoZSB0aXRsZTo6JykKICAgIGlmIG5vdCBzZWxmLnNsdWc6CiAgICAgIHByaW50KGYnc2x1ZyBkb2VzIG5vdCBleGlzdCcpCiAgICAgIHNlbGYuc2x1ZyA9IHNsdWdpZnkoc2VsZi5uYW1lKQogICAgICBwcmludChmJ3NldCBzbHVnIHRvIHNsdWdpZmllZCBzZWxmLm5hbWU6IHtzZWxmLm5hbWV9IC0tPiB7c2VsZi5zbHVnfVxuJykKICAgIGVsc2U6IHByaW50KGYnc2x1ZyBhbHJlYXkgc2V0IHRvIHtzZWxmLnNsdWd9XG4tLScpCgojU0VUIFBBR0UgTEVWRUwgQU5EIEZVTEwgU0xVRwogICAgcHJpbnQoZidcbjo6Y2hlY2tpbmcgcGFyZW50IHBhZ2VzIHRvIGFzc2lnbiBwYWdlIGxldmVscyBhbmQgYXNzZW1ibGUgZnVsbCBzbHVnOjonKQogICAgaWYgbm90IHNlbGYucGFyZW50X3BhZ2VfaWQ6ICAjcm9vdCBsZXZlbCBwYWdlICh1c2UgX2lkIHRvIGF2b2lkIHJlY3Vyc2l2ZSBsb29rdXBzKQogICAgICBwcmludCgncGFnZSBoYXMgbm8gcGFyZW50cycpCiAgICAgIHBhcmVudF9zbHVnID0gJycKICAgICAgc2VsZi5wYWdlX2xldmVsID0gMQogICAgICBkaXNwbGF5X25hbWUgPSBzZWxmLm5hbWUKICAgICAgcHJpbnQoZidzZXQgcGFnZSBsZXZlbCB0byB7c2VsZi5wYWdlX2xldmVsfSBhbmQgJykKICAgICAgcHJpbnQoZidhc3NlbWJsZWQgcGFyZW50X3NsdWcgLT4ge3BhcmVudF9zbHVnfVxuLS0nICkgICAgCiAgICBlbHNlOiAjIHBhZ2UgaGFzIGEgcGFyZW50CiAgICAgIHByaW50KGYncGFnZSBoYXMgcGFyZW50IHBhZ2Ugd2l0aCBpZDoge3NlbGYucGFyZW50X3BhZ2VfaWR9JykKICAgICAgcGFyZW50ID0gUGFnZS5vYmplY3RzLmdldChpZD1zZWxmLnBhcmVudF9wYWdlX2lkKQogIAogICAgICBpZiBub3QgcGFyZW50LnBhcmVudF9wYWdlX2lkOiAjIHNlY29uZCBsZXZlbCBwYWdlCiAgICAgICAgcHJpbnQoZidwYWdlIGhhcyBubyBncmFuZHBhcmVudHMnKQogICAgICAgIHBhcmVudF9zbHVnID0gZicve3BhcmVudC5zbHVnfScKICAgICAgICBzZWxmLnBhZ2VfbGV2ZWwgPSAyCiAgICAgICAgZGlzcGxheV9uYW1lID0gZid7cGFyZW50Lm5hbWV9IC8ge3NlbGYubmFtZX0nCiAgICAgICAgcHJpbnQoZidzZXQgcGFnZSBsZXZlbCB0byB7c2VsZi5wYWdlX2xldmVsfSBhbmQgJykKICAgICAgICBwcmludChmJ2Fzc2VtYmxlZCBwYXJlbnRfc2x1ZyAtPiB7cGFyZW50X3NsdWd9XG4tLScgKSAgCiAgICAgIGVsc2U6ICN0aGlyZCBsZXZlbCBwYWdlCiAgICAgICAgcHJpbnQoZidwYWdlIGhhcyBhIGdyYW5kcGFyZW50IHdpdGggaWQ6IHtwYXJlbnQucGFyZW50X3BhZ2VfaWR9JykKICAgICAgICBncmFuZF9wYXJlbnQgPSBQYWdlLm9iamVjdHMuZ2V0KGlkPXBhcmVudC5wYXJlbnRfcGFnZV9pZCkKICAgICAgICBwYXJlbnRfc2x1ZyA9IGYnL3tncmFuZF9wYXJlbnQuc2x1Z30ve3BhcmVudC5zbHVnfScKICAgICAgICBzZWxmLnBhZ2VfbGV2ZWwgPSAzCiAgICAgICAgZGlzcGxheV9uYW1lID0gZid7Z3JhbmRfcGFyZW50Lm5hbWV9IC8ge3BhcmVudC5uYW1lfSAvIHtzZWxmLm5hbWV9JwogICAgICAgIHByaW50KGYnc2V0IHBhZ2UgbGV2ZWwgdG8ge3NlbGYucGFnZV9sZXZlbH0gYW5kICcpCiAgICAgICAgcHJpbnQoZidhc3NlbWJsZWQgcGFyZW50X3NsdWcgLT4ge3BhcmVudF9zbHVnfVxuLS0nICkKCiAgICAjYXNzZW1ibGUgYW5kIHNldCBmdWxsIHNsdWcKICAgIGZ1bGxfc2x1ZyA9IHBhcmVudF9zbHVnK2YnL3tzZWxmLnNsdWd9LycKICAgIHNlbGYuZnVsbF9zbHVnID0gZnVsbF9zbHVnCiAgICBzZWxmLmRpc3BsYXlfbmFtZSA9IGRpc3BsYXlfbmFtZQogICAgcHJpbnQoZidzZXQgZnVsbF9zbHVnIC0+IHtmdWxsX3NsdWd9JykgCgojIFNFVCBQQUdFIERFU0NSSVBUSU9OCiMgY2hlY2sgZm9yIHVzZXIgaW5wdXQgKHNlbGYuZGVzYykKIyB1c2UgcHVibGljYXRpb25fbGlzdGluZy5kZXNjIG9yIGFydGljbGUuZGVzYwojICAgIGVuY291cmFnZXMgdW5pcXVlIGRlc2NyaXB0aW9ucyAodXNlZCBpbiBtZXRhIHRhZ3MpIGJ5IGZpcnN0IGRlZmF1bHRpbmcgXAojICAgIHRvIHVzZXIgaW5wdXQsIHRoZW4gYnkgZHVwbGljYXRpbmcgcHVibGljYXRpb25fbGlzdGluZy5kZXNjIG9yIFwKIyAgICBhcnRpY2xlLmRlc2MgdG8gcGFnZS5kZXNjIFwKIyAgICBkdXBsaWNhdGlvbiBvbmx5IGhhcHBlbnMgd2hlbiB0aGUgZmllbGQgaXMgYmxhbmsgIiIiCgogICAgcHJpbnQoZidcbjo6Y2hlY2sgZm9yIGVtcHR5IGRlc2NyaXB0aW9uOjonKQogICAgaWYgbm90IHNlbGYuZGVzYzoKICAgICAgcHJpbnQoZid1c2VyIGlucHV0IGZvciBkZXNjcmlwdGlvbiBpcyBlbXB0eScpCiAgICAgIHByaW50KGYnY2hlY2sgZm9yIHB1YmxpY2F0aW9uIG9yIGFydGljbGUgZm9yIGR1cGxpY2F0aW9uIHRvIHBhZ2UuZGVzYycpCiAgICAgIGlmIHNlbGYucHVibGljYXRpb25fbGlzdGluZ19pZDoKICAgICAgICBwcmludChmJ2hhcyBwdWJsaWNhdGlvbiBsaXN0aW5nJykKICAgICAgICBwcmludChmJ3NldCBkZXNjOiBcbiAie3NlbGYucHVibGljYXRpb25fbGlzdGluZy5kZXNjfSInKQogICAgICAgIHNlbGYuZGVzYyA9IHNlbGYucHVibGljYXRpb25fbGlzdGluZy5kZXNjCiAgICAgICAgaWYgc2VsZi5hcnRpY2xlX2lkOiBwcmludChmJ2hhcyBhcnRpY2xlIGJ1dCB1c2luZyBwdWJsaWNhdGlvbl9saXN0aW5nLmRlc2MnKQogICAgICBlbGlmIHNlbGYuYXJ0aWNsZV9pZDoKICAgICAgICBwcmludChmJ2hhcyBhcnRpY2xlIGFuZCBubyBwdWJsaWNhdGlvbiBsaXN0aW5nJykKICAgICAgICBwcmludChmJ3NldCBzZWxmLmRlc2M6XG4gIntzZWxmLmFydGljbGUuZGVzY30iJykKICAgICAgICBzZWxmLmRlc2MgPSBzZWxmLmFydGljbGUuZGVzYwogICAgICBlbHNlOiBwcmludChmJ25vIGFzc29jIHB1YmxpY2F0aW9uIG9yIGFydGljbGUnKQogICAgZWxzZTogcHJpbnQoZidoYXMgZnVsbCBkZXNjcmlwdGlvbjpcbiAie3NlbGYuZGVzY30iJykKICAgIHByaW50KGYnLS0nKQogICAgCiAgICBzdXBlcihQYWdlLCBzZWxmKS5zYXZlKCphcmdzLCAqKmt3YXJncykKCiAgZGVmIF9fc3RyX18oc2VsZik6CiAgICByZXR1cm4gc2VsZi5kaXNwbGF5X25hbWUKCiAgY2xhc3MgTWV0YToKICAgIG9yZGVyaW5nID0gWyJkaXNwbGF5X25hbWUiXQ",
+					"AgAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPC/AAAAAAEAAAAAAAAAAAAAAJUUAAAAAAAAAAAAAAAA8L8"
+				]
+			]
+		}
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"packag",
+				"Preferences: Browse Packages"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"instll",
+				"Package Control: Install Package"
+			],
+			[
+				"syntax pyth",
+				"Set Syntax: Python"
+			],
+			[
+				"instal",
+				"Package Control: Install Package"
+			],
+			[
+				"",
+				"Code Folding: Fold All"
+			],
+			[
+				"html",
+				"Set Syntax: HTML"
+			],
+			[
+				"package con",
+				"Package Control: Add Repository"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Preferences: Browse Packages"
+			],
+			[
+				"package",
+				"Preferences: Browse Packages"
+			],
+			[
+				"isntall pack",
+				"Package Control: Install Package"
+			],
+			[
+				"packa",
+				"Package Control: Add Repository"
+			],
+			[
+				"install pack",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/Users/palmer/Sites/ghc-replit"
+	],
+	"file_history":
+	[
+		"/Users/palmer/Sites/ghc-replit/projects/models.py",
+		"/Users/palmer/.ssh/config",
+		"/Users/palmer/Desktop/sublime clutter/ghc infos.txt",
+		"/Users/palmer/Sites/guyhopkins.com/guy hopkins infos.txt",
+		"/Users/palmer/Sites/guyhopkins.com/sftp-config.json",
+		"/Users/palmer/Sites/guyhopkins.com/wp-config.php",
+		"/Users/palmer/Library/Application Support/Sublime Text 3/Packages/User/sftp_servers/guyhopkins.com.json",
+		"/Users/palmer/Library/Application Support/Sublime Text 3/Packages/User/sftp_servers/sftp-config.json",
+		"/Users/palmer/Desktop/Costco Cover Letter.txt",
+		"/Users/palmer/Sites/twospiritsltd.com/index.html",
+		"/Users/palmer/Sites/twospiritsltd.com/assets/css/vars.css",
+		"/Users/palmer/Sites/twospiritsltd.com/assets/css/pages.css",
+		"/Users/palmer/Sites/twospiritsltd.com/assets/css/templates.css",
+		"/Users/palmer/Sites/twospiritsltd.com/assets/css/organisms.css",
+		"/Users/palmer/Sites/twospiritsltd.com/assets/css/molecules.css",
+		"/Users/palmer/Sites/twospiritsltd.com/assets/css/atoms.css",
+		"/Users/palmer/Desktop/8 April 28 Infuriating Gaslighting.png",
+		"/Users/palmer/Documents/TO DO LIST WWW.LM.E.txt",
+		"/Users/palmer/Documents/ongoing sales.txt",
+		"/Users/palmer/Documents/ongoing task list.txt",
+		"/Users/palmer/Documents/Blog Post Ideas.txt",
+		"/Users/palmer/Documents/FYB ❤️ LME.txt",
+		"/Users/palmer/Documents/abbey.txt",
+		"/Users/palmer/Documents/CIRCLEK COURT CASE DEFENSE.txt",
+		"/Users/palmer/Downloads/Daily Specials.mhtml",
+		"/Users/palmer/Desktop/to print/preferences.txt",
+		"/Users/palmer/Documents/Roly Poly.txt",
+		"/Users/palmer/Documents/to keep/ck.txt",
+		"/Users/palmer/Documents/hot stuff hot bucks.txt",
+		"/Users/palmer/Desktop/HURRICANE IDA",
+		"/Users/palmer/Documents/Writing/snippets.txt",
+		"/Users/palmer/Library/Mobile Documents/com~apple~CloudDocs/movies.txt",
+		"/Users/palmer/Library/Mobile Documents/com~apple~CloudDocs/txt docs/LUDWIG VON MISES.txt",
+		"/Users/palmer/Desktop/the-warriors.jpg",
+		"/Users/palmer/Library/Mobile Documents/com~apple~CloudDocs/LME/LME IT Admin/IT Administration Support Packages.txt",
+		"/Users/palmer/Library/Mobile Documents/com~apple~CloudDocs/LME/1 client docs/2 AWC/awc-maintanence-proposal.txt",
+		"/Users/palmer/Sites/acupuncturebr.com/testimonials.cfm"
+	],
+	"find":
+	{
+		"height": 42.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"scrollbar_highlights": true,
+		"show_context": true,
+		"use_buffer2": true,
+		"use_gitignore": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		},
+		{
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"selected": true,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 9209,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								775,
+								775
+							]
+						],
+						"settings":
+						{
+							"auto_name": "from django.db import models",
+							"incomplete_sync": null,
+							"syntax": "Packages/Python/Python.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 302.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"stack_multiselect": false,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 30.0
+	},
+	"input":
+	{
+		"height": 61.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.5,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.SFTP":
+	{
+		"height": 148.0,
+		"history":
+		[
+		]
+	},
+	"output.find_results":
+	{
+		"height": 0.0,
+		"history":
+		[
+		]
+	},
+	"pinned_build_system": "",
+	"project": "ghc-publication.sublime-project",
+	"replace":
+	{
+		"height": 56.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/Library/Mobile Documents/com~apple~CloudDocs/movies.txt"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 199.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
