@@ -1,4 +1,51 @@
 {% extends '../web/ghc.html' %}
 {% block content %}
-{{ project_slug }}
+
+<div class="content-subhead">
+  <div class="container">
+    <div class="flex-halfs">
+      <div class="half">
+        <h2>{{ project_slug }}</h2>
+      </div>
+      <div class="half">
+        <div class="breadcrumbs">
+          <a href="/">Home</a> &gt; <a href="/projects/">Projects</a> &gt; Airport Cargo Dock
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container project">
+  <div class="flex-fifths">
+    <div class="three-fifths">
+      <img class="example" src="/projects/images/airport-cargo-dock-1.jpg" alt="Airport Cargo Dock">
+      <img class="example" src="/projects/images/airport-cargo-dock-2.jpg" alt="Airport Cargo Dock">
+    </div>
+    <div class="two-fifths">
+      <div class="desc">
+        <h3>Project Description</h3>
+        <p>
+          Scope of project included demolition of an existing airplane hangar and construction of a new cargo building comprising 42.000 sf with a 165'-wide clear-span structure, 210' long with 38' eve height. Cargo area included high bay lighting, dry pipe fire protection system, wall mounted louvers and exhaust fans.
+        </p>
+        <ul class="checklist">
+          <li><strong>Owner:</strong> City of Baton Rouge / EBR Parish</li>
+          <li><strong>Architect/Engineer:</strong> Go Tech</li>
+          <li><strong>Project Value:</strong> $2,410,000</li>
+          <li><strong>Start Date:</strong> 11/01/2004</li>
+          <li><strong>Completion Date:</strong> 05/01/2005</li>
+        </ul
+      </div>
+      <div class="more-projects">
+        <div class="flex-halfs allscreens">
+          <div class="half">
+            <a class="button dark grey center full" href="/projects/eden-park-library"><i class="fa fa-chevron-left"></i> Prev</a>
+          </div>
+          <div class="half">
+            <a class="button dark grey center full" href="/projects/louisiana-lottery">Next <i class="fa fa-chevron-right"></i></a>  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}

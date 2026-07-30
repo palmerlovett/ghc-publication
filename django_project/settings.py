@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-2bl)z%0tv16ukb-4!juocfiuw7-#5g-3m464jm%=981h+c=wg5'
+SECRET_KEY = os.environ['DJANGO_SECRET']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -94,7 +94,7 @@ DATABASES = {
 
 STORAGES = {
     "default": {
-        "BACKEND": "storages.backends.gcloud.GoogleCloudStorage",
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
         "OPTIONS": {
           
         },
@@ -104,9 +104,9 @@ STORAGES = {
     },
 }
 
-GS_BUCKET_NAME = 'ghc-media'
-MEDIA_URL = '/media/'
-
+#GS_BUCKET_NAME = 'ghc-media'
+MEDIA_URL = 'https://147.182.128.153:8080/'
+MEDIA_ROOT = os.environ['MEDIA_SERVER_ROOT']
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
