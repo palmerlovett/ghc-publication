@@ -2,10 +2,13 @@ from django.shortcuts import render
 
 # Create your views here.
 def index(request):
+	from .models import Project
+	projects = Project.objects.all()
 	context = {
 		'title': 'Projects',
 		'desc': 'Construction projects completed by Guy Hopkins Construction.',
 		'pageclass': 'projects',
+		'projects': projects
 	}
 	return render(request, 'projects/index.html', context)
 

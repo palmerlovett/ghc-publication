@@ -28,11 +28,12 @@ SECRET_KEY = os.environ['DJANGO_SECRET']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev",
+ALLOWED_HOSTS = ["lastmansolutions.com", "0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev",
                  "147.182.128.153"]
 
 
-CSRF_TRUSTED_ORIGINS = ["https://0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev",
+CSRF_TRUSTED_ORIGINS = ["http://lastmansolutions.com",
+                        "https://0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev",
                         "http://147.182.128.153"]
 
 # Application definition
@@ -105,7 +106,7 @@ STORAGES = {
 }
 
 #GS_BUCKET_NAME = 'ghc-media'
-MEDIA_URL = 'https://147.182.128.153:8080/'
+MEDIA_URL = 'http://147.182.128.153:8080/'
 MEDIA_ROOT = os.environ['MEDIA_SERVER_ROOT']
 
 # Password validation
