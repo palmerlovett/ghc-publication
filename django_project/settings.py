@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['DJANGO_SECRET']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["lastmansolutions.com", "0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev",
                  "147.182.128.153"]
@@ -106,7 +106,7 @@ STORAGES = {
 }
 
 #GS_BUCKET_NAME = 'ghc-media'
-MEDIA_URL = 'http://147.182.128.153:8080/'
+MEDIA_URL = 'https://m.lastmansolutions/'
 MEDIA_ROOT = os.environ['MEDIA_SERVER_ROOT']
 
 # Password validation
