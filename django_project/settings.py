@@ -106,7 +106,7 @@ STORAGES = {
 }
 
 #GS_BUCKET_NAME = 'ghc-media'
-MEDIA_URL = 'https://m.lastmansolutions/'
+MEDIA_URL = 'https://m.lastmansolutions.com/'
 MEDIA_ROOT = os.environ['MEDIA_SERVER_ROOT']
 
 # Password validation
