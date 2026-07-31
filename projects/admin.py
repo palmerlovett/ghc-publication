@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
-from .models import Project, Photo, ProjectPhoto, ArchitectDesigner, Owner
+from .models import Project, Photo, ProjectPhoto, Category, ArchitectDesigner, Owner
 from django import forms
 from django.conf import settings
 
@@ -12,6 +12,10 @@ from django.conf import settings
 class ProjectAdmin(admin.ModelAdmin):
 	list_display = ('title',)
 
+@admin.register(Category)
+class CategoryAdmin(admin.ModelAdmin):
+	list_display = ('name',)
+
 @admin.register(Photo)
 class PhotoAdmin(admin.ModelAdmin):
 	list_display = ('photo_id', 'file')
@@ -19,6 +23,7 @@ class PhotoAdmin(admin.ModelAdmin):
 @admin.register(ProjectPhoto)
 class ProjectPhotoAdmin(admin.ModelAdmin):
 	list_display = ('photo', 'project',)
+	exclude = ('project',)
 
 @admin.register(ArchitectDesigner)
 class ArchitectDesigner(admin.ModelAdmin):

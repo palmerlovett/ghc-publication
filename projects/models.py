@@ -5,6 +5,13 @@ from django.utils.text import slugify
 
 # Create your models here.
 
+class Category(models.Model):
+	category_id = models.AutoField(primary_key=True)
+	name = models.CharField(max_length=35)
+
+	def __str(self):
+		return f'{self.name}'
+
 class Owner(models.Model):
 	owner_id = models.AutoField(primary_key=True)
 	name = models.CharField(max_length=100)
@@ -20,6 +27,7 @@ class ArchitectDesigner(models.Model):
 		return f'{self.name}'
 
 class Project(models.Model):
+	project_id = models.AutoField(primary_key=True)
 	title = models.CharField(max_length=100, default="")
 	slug = models.CharField(max_length=100, default="", blank=True)
 
@@ -28,16 +36,22 @@ class Project(models.Model):
 	owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True)
 	architect_designer = models.ForeignKey(ArchitectDesigner, on_delete=models.SET_NULL, null=True)
 	project_value = models.CharField(max_length=12, default="")
-	start_date = models.DateField(default="")
-	completion_date = models.DateField(default="")
+	start_date = models.DateField(default="", blank=True, null=True)
+	completion_date = models.DateField(default="", blank=True, null=True)
+
+	category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
 
 	listed = models.BooleanField(default=True)
+	featured = models.BooleanField(default=True)
 	additional_project = models.ForeignKey('projects.Project', on_delete=models.SET_NULL, null=True, blank=True)
 
 	photo_1 = models.ForeignKey('projects.ProjectPhoto', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_1')
 	photo_2 = models.ForeignKey('projects.ProjectPhoto', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_2')
 	photo_3 = models.ForeignKey('projects.ProjectPhoto', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_3')
 	photo_4 = models.ForeignKey('projects.ProjectPhoto', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_4')
+
+	class Meta:
+		ordering = ['project_id']
 
 	def save(self, *args, **kwargs):
 		if self.slug == "":
@@ -63,7 +77,6 @@ class Project(models.Model):
 
 class Photo(models.Model):
 	photo_id = models.AutoField(primary_key=True)
-	slug = models.CharField(max_length=100, blank=True)
 
 	file = models.ImageField(upload_to="projects_tmp")
 
