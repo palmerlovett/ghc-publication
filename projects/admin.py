@@ -2,7 +2,7 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib import admin
-from .models import Project, Photo, ProjectPhoto, Category, ArchitectDesigner, Owner
+from .models import Photo, Project, ProjectPhoto, Category, ArchitectDesigner, Owner
 from django import forms
 from django.conf import settings
 
