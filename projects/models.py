@@ -112,13 +112,13 @@ class ProjectPhoto(models.Model):
 		else:
 			print(f'photo not yet saved')
 			print(f"current filepath: {file.path}, new filepath: {new_path}")
-			#print(f"os.rename file.path: {file.path} to new_path: {new_path}")
+			print(f"os.rename file.path: {file.path} to new_path: {new_path}")
 			#os.rename(file.path, new_path)
 			print(f'changing file.name')
 			file.name = new_filename
 			print(f'setting self.photo.file as file and saving self.photo')
 			self.photo.file = file
-			self.save(update_fields=['photo'])
+			self.photo.save(update_fields='file')
 			print(f"current filepath (self.photo): {self.photo.file.path}, new filepath: {new_path}")
 
 			print(f"saved photo to new path")
