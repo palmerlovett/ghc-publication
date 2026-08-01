@@ -55,8 +55,7 @@ class Project(models.Model):
 		ordering = ['project_id']
 
 	def save(self, *args, **kwargs):
-		#if self.slug == "":
-		#	self.slug = slugify(self.title)
+
 
 		super().save(*args, **kwargs)
 		if self.photo_1:
@@ -114,8 +113,8 @@ class ProjectPhoto(models.Model):
 		else:
 			print(f'photo not yet saved')
 			print(f"current filepath: {file.path}, new filepath: {new_path}")
-			#print(f"os.rename file.path: {file.path} to new_path: {new_path}")
-			#os.rename(file.path, new_path) not needed, self.photo.save(update_fields) works better
+			print(f"os.rename file.path: {file.path} to new_path: {new_path}")
+			os.rename(file.path, new_path) #not needed ??, self.photo.save(update_fields) works better
 			print(f'changing file.name')
 			file.name = new_filename
 			print(f'setting self.photo.file as file and saving self.photo')
