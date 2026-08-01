@@ -44,7 +44,7 @@ class Project(models.Model):
 
 	category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
 
-	featured = models.BooleanField(default=True)
+	featured = models.BooleanField(default=False)
 
 	photo_1 = models.ForeignKey('projects.ProjectPhoto', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_1')
 	photo_2 = models.ForeignKey('projects.ProjectPhoto', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_2')

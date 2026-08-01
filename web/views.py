@@ -2,10 +2,13 @@ from django.shortcuts import render
 
 
 def home(request):
+    from projects.models import Project
+    featured = Project.objects.filter(featured=True, parent_project__isnull=True)[:5]
     context = {
         'title': 'Home',
         'desc': 'Welcome to Guy Hopkins Construction Co., Inc.',
         'pageclass': 'homepage',
+        'featured': featured,
     }
     return render(request, 'web/pages/home.html', context)
 

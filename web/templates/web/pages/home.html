@@ -86,36 +86,14 @@
   </div>
   <h3 class="dark-banner">Projects</h3>
   <ul class="projects">
+    {% for project in featured %}
     <li>
-      <a href="/projects/zhspa-auditorium">
-        <img src="/projects/images/zhspa-auditorium.jpg" alt="Zachary High School Performing Arts Auditorium">
-        <h4>Performing Arts Auditorium</h4>
+      <a href="{% url 'projects:project' project.slug %}">
+        <img src="{{ project.photo_1.photo.file.url }}" alt="{{ project.title }}">
+        <h4>{{ project.title }}</h4>
       </a>
     </li>
-    <li>
-      <a href="/projects/river-parishes-community-college">
-        <img src="/projects/images/river-parishes-community-college.jpg" alt="River Parish Community College">
-        <h4>River Parishes Community College</h4>
-      </a>
-    </li>
-    <li>
-      <a href="/projects/cecilia-highschool">
-        <img src="/projects/images/cecilia-highschool.jpg" alt="Cecilia High School">
-        <h4>Cecilia High School</h4>
-      </a>
-    </li>
-    <li>
-      <a href="/projects/gw-carver-primary-school">
-        <img src="/projects/images/gw-carver-primary-school.jpg" alt="G.W. Carver Primary School">
-        <h4>G.W. Carver Primary School</h4>
-      </a>
-    </li>
-    <li>
-      <a href="/projects/delgado-community-college" alt="Delgado Community College">
-        <img src="/projects/images/delgado-community-college.jpg">
-        <h4>Delgado Community College</h4>
-      </a>
-    </li>
+    {% endfor %}
   </ul>
 </div>
 <div class="home-services">
