@@ -20,8 +20,6 @@ def project(request, project_slug=None):
 	prev_project = Project.objects.filter(parent_project__isnull=True, project_id__lt=project.project_id).order_by('project_id').first()
 	first = Project.objects.filter(parent_project__isnull=True, project_id__gt=0).order_by('project_id').first()
 	last = Project.objects.filter(parent_project__isnull=True, project_id__gt=0).order_by('project_id').last()
-	print(f'next project: {next_project}')
-	print(f'prev project: {prev_project}')
 	if next_project is None:
 		next_project = first
 	if prev_project is None:
