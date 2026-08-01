@@ -5,11 +5,11 @@
   <div class="container">
     <div class="flex-halfs">
       <div class="half">
-        <h2>{{ project_slug }}</h2>
+        <h2>{{ project.title }}</h2>
       </div>
       <div class="half">
         <div class="breadcrumbs">
-          <a href="/">Home</a> &gt; <a href="/projects/">Projects</a> &gt; Airport Cargo Dock
+          <a href="/">Home</a> &gt; <a href="/projects/">Projects</a> &gt; {{ project.title }}
         </div>
       </div>
     </div>
@@ -18,30 +18,37 @@
 <div class="container project">
   <div class="flex-fifths">
     <div class="three-fifths">
-      <img class="example" src="/projects/images/airport-cargo-dock-1.jpg" alt="Airport Cargo Dock">
-      <img class="example" src="/projects/images/airport-cargo-dock-2.jpg" alt="Airport Cargo Dock">
+    	{% if project.photo_1 %}
+      	<img class="example" src="{{ project.photo_1.photo.file.url }}" alt="{{ project.title }}">
+      {% endif %}
+      {% if project.photo_2 %}
+      	<img class="example" src="{{ project.photo_2.photo.file.url }}" alt="{{ project.title }}">
+      {% endif %}
+      {% if project.photo_3 %}
+      	<img class="example" src="{{ project.photo_3.photo.file.url }}" alt="{{ project.title }}">
+      {% endif %}
+      {% if project.photo_4 %}
+      	<img class="example" src="{{ project.photo_4.photo.file.url }}" alt="{{ project.title }}">
+      {% endif %}
     </div>
     <div class="two-fifths">
-      <div class="desc">
-        <h3>Project Description</h3>
-        <p>
-          Scope of project included demolition of an existing airplane hangar and construction of a new cargo building comprising 42.000 sf with a 165'-wide clear-span structure, 210' long with 38' eve height. Cargo area included high bay lighting, dry pipe fire protection system, wall mounted louvers and exhaust fans.
-        </p>
-        <ul class="checklist">
-          <li><strong>Owner:</strong> City of Baton Rouge / EBR Parish</li>
-          <li><strong>Architect/Engineer:</strong> Go Tech</li>
-          <li><strong>Project Value:</strong> $2,410,000</li>
-          <li><strong>Start Date:</strong> 11/01/2004</li>
-          <li><strong>Completion Date:</strong> 05/01/2005</li>
-        </ul
-      </div>
+    	{% include 'projects/project_desc.html' %}
+    	{% if projects.additional_project %}
+    		{% with project as projects.additional_project %}
+    		{% include 'projects/projects_desc.html' %}
+    		{% endwith %}
+    	{% endif %}
       <div class="more-projects">
         <div class="flex-halfs allscreens">
           <div class="half">
-            <a class="button dark grey center full" href="/projects/eden-park-library"><i class="fa fa-chevron-left"></i> Prev</a>
+          	{% if prev %}
+            <a class="button dark grey center full" href="{% url 'project' prev.slug %}"><i class="fa fa-chevron-left"></i> Prev</a>
+          	{% endif %}
           </div>
           <div class="half">
-            <a class="button dark grey center full" href="/projects/louisiana-lottery">Next <i class="fa fa-chevron-right"></i></a>  
+          	{% if next %}
+            <a class="button dark grey center full" href="{% url 'project' next.slug %}">Next <i class="fa fa-chevron-right"></i></a>  
+          	{% endif %}
           </div>
         </div>
       </div>

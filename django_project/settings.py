@@ -28,8 +28,7 @@ SECRET_KEY = os.environ['DJANGO_SECRET']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["lastmansolutions.com", "0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev",
-                 "147.182.128.153"]
+ALLOWED_HOSTS = ["lastmansolutions.com", "0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]
 
 
 CSRF_TRUSTED_ORIGINS = ["https://lastmansolutions.com",
