@@ -33,22 +33,17 @@
     </div>
     <div class="two-fifths">
     	{% include 'projects/project_desc.html' %}
-    	{% if projects.additional_project %}
-    		{% with project as projects.additional_project %}
-    		{% include 'projects/projects_desc.html' %}
-    		{% endwith %}
+    	{% if child_project %}
+    		{% include 'projects/project_desc.html' with project=child_project %}
     	{% endif %}
       <div class="more-projects">
         <div class="flex-halfs allscreens">
           <div class="half">
-          	{% if prev %}
-            <a class="button dark grey center full" href="{% url 'project' prev.slug %}"><i class="fa fa-chevron-left"></i> Prev</a>
-          	{% endif %}
+            <a class="button dark grey center full" href="{% url 'projects:project' prev.slug %}"><i class="fa fa-chevron-left"></i> Prev</a>
           </div>
           <div class="half">
-          	{% if next %}
-            <a class="button dark grey center full" href="{% url 'project' next.slug %}">Next <i class="fa fa-chevron-right"></i></a>  
-          	{% endif %}
+
+            <a class="button dark grey center full" href="{% url 'projects:project' next.slug %}">Next <i class="fa fa-chevron-right"></i></a>  
           </div>
         </div>
       </div>

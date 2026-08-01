@@ -29,8 +29,11 @@ class ArchitectDesigner(models.Model):
 class Project(models.Model):
 	project_id = models.AutoField(primary_key=True)
 	title = models.CharField(max_length=100, default="")
+
+	parent_project = models.ForeignKey('projects.Project', on_delete=models.SET_NULL, null=True, blank=True)
 	slug = models.CharField(max_length=100, default="", blank=True)
 
+	desc_head = models.CharField(max_length=100, blank=True, null=True)
 	desc = models.TextField(default="")
 	
 	owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True)
@@ -41,9 +44,7 @@ class Project(models.Model):
 
 	category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
 
-	listed = models.BooleanField(default=True)
 	featured = models.BooleanField(default=True)
-	additional_project = models.ForeignKey('projects.Project', on_delete=models.SET_NULL, null=True, blank=True)
 
 	photo_1 = models.ForeignKey('projects.ProjectPhoto', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_1')
 	photo_2 = models.ForeignKey('projects.ProjectPhoto', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_2')
@@ -54,8 +55,8 @@ class Project(models.Model):
 		ordering = ['project_id']
 
 	def save(self, *args, **kwargs):
-		if self.slug == "":
-			self.slug = slugify(self.title)
+		#if self.slug == "":
+		#	self.slug = slugify(self.title)
 
 		super().save(*args, **kwargs)
 		if self.photo_1:
@@ -72,13 +73,14 @@ class Project(models.Model):
 			self.photo_4.save()
 
 	def __str__(self):
-		return f"{self.title}"
+		return f"{self.title}, {self.desc_head}"
 
 
 class Photo(models.Model):
 	photo_id = models.AutoField(primary_key=True)
 
 	file = models.ImageField(upload_to="projects_tmp")
+
 
 	def delete(self, *args, **kwargs):
 		print(f'deleting file when photo row is deleted')
@@ -112,13 +114,13 @@ class ProjectPhoto(models.Model):
 		else:
 			print(f'photo not yet saved')
 			print(f"current filepath: {file.path}, new filepath: {new_path}")
-			print(f"os.rename file.path: {file.path} to new_path: {new_path}")
-			#os.rename(file.path, new_path)
+			#print(f"os.rename file.path: {file.path} to new_path: {new_path}")
+			#os.rename(file.path, new_path) not needed, self.photo.save(update_fields) works better
 			print(f'changing file.name')
 			file.name = new_filename
 			print(f'setting self.photo.file as file and saving self.photo')
 			self.photo.file = file
-			self.photo.save(update_fields='file')
+			self.photo.save(update_fields=['file'])
 			print(f"current filepath (self.photo): {self.photo.file.path}, new filepath: {new_path}")
 
 			print(f"saved photo to new path")

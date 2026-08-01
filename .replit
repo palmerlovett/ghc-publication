@@ -41,6 +41,7 @@ timeoutMs = 20000
 
 [nix]
 channel = "stable-25_05"
+packages = ["vim"]
 
 [objectStorage]
 defaultBucketID = "replit-objstore-ab81585a-2d25-46e0-b81e-72ec3dc82ca1"

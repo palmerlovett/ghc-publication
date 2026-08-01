@@ -1,15 +1,19 @@
 <div class="desc">
-  <h3>{{ project.subhead|default:"Project Description" }}</h3>
-  <p>{{ project.desc }}</p>
+  <h3>{{ project.desc_head|default:"Project Description" }}</h3>
+  <p>
+    {% with desc=project.desc|safe %}
+      {{ desc|linebreaks }}
+    {% endwith %}
+  </p>
   <ul class="checklist">
     {% if project.owner %}
-      <li><strong>Owner:</strong> City of Baton Rouge / EBR Parish</li>
+      <li><strong>Owner:</strong> {{ project.owner }}</li>
     {% endif %}
-    {% if project.owner %}
-      <li><strong>Architect/Engineer:</strong> Go Tech</li>
+    {% if project.architect_designer %}
+      <li><strong>Architect/Engineer:</strong> {{ project.architect_designer }}</li>
     {% endif %}
     {% if project.project_value %}
-      <li><strong>Project Value:</strong> {{ project.project_value }}</li>
+      <li><strong>Project Value:</strong> ${{ project.project_value }}</li>
     {% endif %}
     {% if project.start_date %}
       <li><strong>Start Date:</strong> {{ project.start_date }}</li>

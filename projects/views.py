@@ -1,9 +1,10 @@
 from django.shortcuts import render
+from django.utils.safestring import mark_safe
 
 # Create your views here.
 def index(request):
 	from .models import Project
-	projects = Project.objects.filter(listed=True)
+	projects = Project.objects.filter(parent_project__isnull=True)
 	context = {
 		'title': 'Projects',
 		'desc': 'Construction projects completed by Guy Hopkins Construction.',
@@ -15,16 +16,30 @@ def index(request):
 def project(request, project_slug=None):
 	from .models import Project
 	project = Project.objects.get(slug=project_slug)
-	next_project = Project.objects.filter(project_id__gt=project.project_id).order_by('project_id').first()
-	prev_project = Project.objects.filter(project_id__lt=project.project_id).order_by('project_id').first()
+	next_project = Project.objects.filter(parent_project__isnull=True, project_id__gt=project.project_id).order_by('project_id').first()
+	prev_project = Project.objects.filter(parent_project__isnull=True, project_id__lt=project.project_id).order_by('project_id').first()
+	first = Project.objects.filter(parent_project__isnull=True, project_id__gt=0).order_by('project_id').first()
+	last = Project.objects.filter(parent_project__isnull=True, project_id__gt=0).order_by('project_id').last()
+	print(f'next project: {next_project}')
+	print(f'prev project: {prev_project}')
+	if next_project is None:
+		next_project = first
+	if prev_project is None:
+		prev_project = last
+
+	child_project = Project.objects.filter(parent_project__project_id=project.project_id).first()
+
+
+
 	context = {
 		'project_slug': project_slug,
 		'next': next_project,
 		'prev': prev_project,
 		'project': project,
-		'title': project_slug,
-		'desc': 'project desc',
+		'title': project.title,
+		'desc': f'{project.title} details and specifications',
 		'pageclass': 'projects project',
+		'child_project': child_project
 	}
 	return render(request, 'projects/project.html', context)
 
