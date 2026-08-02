@@ -46,30 +46,26 @@ class Project(models.Model):
 
 	featured = models.BooleanField(default=False)
 
-	photo_1 = models.ForeignKey('projects.ProjectPhoto', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_1')
-	photo_2 = models.ForeignKey('projects.ProjectPhoto', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_2')
-	photo_3 = models.ForeignKey('projects.ProjectPhoto', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_3')
-	photo_4 = models.ForeignKey('projects.ProjectPhoto', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_4')
+	photo_1 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_1')
+	photo_2 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_2')
+	photo_3 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_3')
+	photo_4 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_4')
 
 	class Meta:
 		ordering = ['project_id']
 
 	def save(self, *args, **kwargs):
 
-
 		super().save(*args, **kwargs)
-		if self.photo_1:
-			self.photo_1.project = self
-			self.photo_1.save()
-		if self.photo_2:
-			self.photo_2.project = self
-			self.photo_2.save()
-		if self.photo_3:
-			self.photo_3.project = self
-			self.photo_3.save()
-		if self.photo_4:
-			self.photo_4.project = self
-			self.photo_4.save()
+		if self.slug:
+			if self.photo_1:
+				self.photo_1.rename_photo(project_title=self.title)
+			if self.photo_2:
+				self.photo_2.rename_photo(project_title=self.title)
+			if self.photo_3:
+				self.photo_3.rename_photo(project_title=self.title)
+			if self.photo_4:
+				self.photo_4.rename_photo(project_title=self.title)
 
 	def __str__(self):
 		return f"{self.title}, {self.desc_head}"
@@ -77,32 +73,12 @@ class Project(models.Model):
 
 class Photo(models.Model):
 	photo_id = models.AutoField(primary_key=True)
-
 	file = models.ImageField(upload_to="projects_tmp")
 
-
-	def delete(self, *args, **kwargs):
-		print(f'deleting file when photo row is deleted')
-		from django.core.files.storage import default_storage
-		path = self.file.path
-		print(f'delete path: {path}')
-		default_storage.delete(path)
-		print(f'file deleted')
-		print(f'continue to deleting row')
-		super().delete(*args, **kwargs)
-
-	def __str__(self):
-		return self.file.name
-
-class ProjectPhoto(models.Model):
-	photo = models.OneToOneField(Photo, on_delete=models.CASCADE)
-	order = models.IntegerField(default=1)
-	project = models.ForeignKey(Project, on_delete=models.CASCADE, null=True, blank=True)
-
-	def rename_photo(self):
-		file = self.photo.file
+	def rename_photo(self, project_title):
+		file = self.file
 		filename, file_extension = os.path.splitext(file.path)
-		new_filename = f"projects/{slugify(self.project.title)}-{self.photo.photo_id}{file_extension}"
+		new_filename = f"projects/{slugify(project_title)}-{self.photo_id}{file_extension}"
 		new_path = os.path.join(settings.MEDIA_ROOT, new_filename)
 
 		print(f'checking if photo file needs to be moved and renamed from projects_tmp')
@@ -118,19 +94,26 @@ class ProjectPhoto(models.Model):
 			print(f'changing file.name')
 			file.name = new_filename
 			print(f'setting self.photo.file as file and saving self.photo')
-			self.photo.file = file
-			self.photo.save(update_fields=['file'])
-			print(f"current filepath (self.photo): {self.photo.file.path}, new filepath: {new_path}")
+			self.file = file
+			self.save(update_fields=['file'])
+			print(f"current filepath (self.photo): {self.file.path}, new filepath: {new_path}")
 
 			print(f"saved photo to new path")
 
+	def delete(self, *args, **kwargs):
+		print(f'deleting file when photo row is deleted')
+		from django.core.files.storage import default_storage
+		path = self.file.path
+		print(f'delete path: {path}')
+		default_storage.delete(path)
+		print(f'file deleted')
+		print(f'continue to deleting row')
+		super().delete(*args, **kwargs)
+
 	def save(self, *args, **kwargs):
-		if self.project:
-			self.rename_photo()
 		super().save(*args, **kwargs)
 
 
 	def __str__(self):
-		return f'{self.photo.file.name}'
-
+		return self.file.name
 	

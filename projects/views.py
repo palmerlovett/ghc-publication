@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.utils.safestring import mark_safe
-
+from django.contrib.auth.decorators import login_required
+from .models import Project
 # Create your views here.
 def index(request):
 	from .models import Project
@@ -14,7 +15,6 @@ def index(request):
 	return render(request, 'projects/index.html', context)
 
 def project(request, project_slug=None):
-	from .models import Project
 	project = Project.objects.get(slug=project_slug)
 	next_project = Project.objects.filter(parent_project__isnull=True, project_id__gt=project.project_id).order_by('project_id').first()
 	prev_project = Project.objects.filter(parent_project__isnull=True, project_id__lt=project.project_id).order_by('project_id').first()
@@ -41,9 +41,10 @@ def project(request, project_slug=None):
 	}
 	return render(request, 'projects/project.html', context)
 
-
+@login_required
 def add(request):
 	context = {
+		'title': 'Add Project',
 		'desc': 'project desc',
 		'pageclass': 'add-project',
 	}
@@ -52,11 +53,13 @@ def add(request):
 	elif request.method == "POST":
 		return render(request, 'projects/edit-complete', context)
 
+@login_required
 def edit(request, project_slug=None):
-
+	project = Project.objects.get(slug=project_slug)
 	context = {
-		'project_title': project_slug,
-		'desc': 'project desc',
+		'title': f'Edit Project: {project.title}',
+		'project_title': project.title,
+		'desc': 'editor for a Guy Hopkins ',
 		'pageclass': 'add-project',
 	}
 	if request.method == "GET":

@@ -89,7 +89,7 @@
     {% for project in featured %}
     <li>
       <a href="{% url 'projects:project' project.slug %}">
-        <img src="{{ project.photo_1.photo.file.url }}" alt="{{ project.title }}">
+        <img src="{{ project.photo_1.file.url }}" alt="{{ project.title }}">
         <h4>{{ project.title }}</h4>
       </a>
     </li>

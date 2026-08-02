@@ -7,6 +7,8 @@ The `urlpatterns` list routes URLs to views. For more information please see:
 from django.contrib import admin
 from django.urls import include, path
 
+admin.site.site_header = 'guyhopkins.com administration'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('projects/', include("projects.urls"), name="projects"),

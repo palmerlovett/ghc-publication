@@ -2,8 +2,8 @@
 {% block content %}
 <div class="content-subhead">
 	<div class="container">
-		<h2>{{ project_title|"Add New Project" }}</h2>
-
+		<h2>{{ project_title|default:"Add New Project" }}</h2>
+	<div>
 </div>
 
 {% endblock %}
