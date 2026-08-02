@@ -31,6 +31,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = [DOMAIN,
                  "lastmansolutions.com",
+                 "147.182.128.153",
                  "0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]
 
 CSRF_TRUSTED_ORIGINS = [f"https://{DOMAIN}/",
