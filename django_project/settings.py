@@ -18,6 +18,7 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+DOMAIN = 'guyhopkins.net'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -26,15 +27,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['DJANGO_SECRET']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ["guyhopkins.com",
-                 "guyhopkins.net",
+ALLOWED_HOSTS = [DOMAIN,
                  "lastmansolutions.com",
                  "0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]
 
-CSRF_TRUSTED_ORIGINS = ["https://guyhopkins.com",
-                        "https://guyhopkins.net",
+CSRF_TRUSTED_ORIGINS = [f"https://{DOMAIN}/",
                         "https://lastmansolutions.com",
                         "https://0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]
 
@@ -53,7 +52,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    #'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -103,12 +102,12 @@ STORAGES = {
         },
     },
     "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
     },
 }
 
 #GS_BUCKET_NAME = 'ghc-media'
-MEDIA_URL = 'https://m.lastmansolutions.com/'
+MEDIA_URL = f'https://m.{DOMAIN}/'
 MEDIA_ROOT = os.environ['MEDIA_SERVER_ROOT']
 
 # Password validation
@@ -145,7 +144,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_URL = f'https://s.{DOMAIN}/'
+STATIC_ROOT = '/var/www/static'
 
 LOGIN_URL = 'admin:login'
