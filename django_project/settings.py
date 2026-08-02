@@ -26,12 +26,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ['DJANGO_SECRET']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ["lastmansolutions.com", "0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]
+ALLOWED_HOSTS = ["guyhopkins.com",
+                 "guyhopkins.net",
+                 "lastmansolutions.com",
+                 "0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]
 
-
-CSRF_TRUSTED_ORIGINS = ["https://lastmansolutions.com",
+CSRF_TRUSTED_ORIGINS = ["https://guyhopkins.com",
+                        "https://guyhopkins.net",
+                        "https://lastmansolutions.com",
                         "https://0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]
 
 # Application definition
