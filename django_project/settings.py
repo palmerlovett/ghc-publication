@@ -35,7 +35,7 @@ ALLOWED_HOSTS = [HOST,
                  "147.182.128.153",
                  "0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]
 
-CSRF_TRUSTED_ORIGINS = [URL,
+CSRF_TRUSTED_ORIGINS = ["https://guyhopkins.net",
                         "https://lastmansolutions.com",
                         "https://0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]
 
