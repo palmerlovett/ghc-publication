@@ -55,8 +55,11 @@ class Project(models.Model):
 		ordering = ['project_id']
 
 	def save(self, *args, **kwargs):
+		if self.slug:
+			self.slug = slugify(self.slug)
 
 		super().save(*args, **kwargs)
+		
 		if self.slug:
 			if self.photo_1:
 				self.photo_1.rename_photo(project_title=self.title)
