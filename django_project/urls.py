@@ -10,7 +10,7 @@ from django.urls import include, path
 admin.site.site_header = 'guyhopkins.com administration'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('projects/', include("projects.urls"), name="projects"),
-    path('', include('web.urls')),
+    path('admin/', admin.site.urls, name="admin"),
+    path('projects/', include("projects.urls"), name="project"),
+    path('', include('web.urls'), name="web"),
 ]

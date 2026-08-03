@@ -41,28 +41,28 @@ def project(request, project_slug=None):
 	}
 	return render(request, 'projects/project.html', context)
 
-@login_required
-def add(request):
-	context = {
-		'title': 'Add Project',
-		'desc': 'project desc',
-		'pageclass': 'add-project',
-	}
-	if request.method == "GET":
-		return render(request, 'projects/add-edit.html', context)
-	elif request.method == "POST":
-		return render(request, 'projects/edit-complete', context)
-
-@login_required
-def edit(request, project_slug=None):
-	project = Project.objects.get(slug=project_slug)
-	context = {
-		'title': f'Edit Project: {project.title}',
-		'project_title': project.title,
-		'desc': 'editor for a Guy Hopkins ',
-		'pageclass': 'add-project',
-	}
-	if request.method == "GET":
-		return render(request, 'projects/add-edit.html', context)
-	elif request.method == "POST":
-		return render(request, 'projects/edit-complete', context)
+#@login_required
+#def add(request):
+#	context = {
+#		'title': 'Add Project',
+#		'desc': 'project desc',
+#		'pageclass': 'add-project',
+#	}
+#	if request.method == "GET":
+#		return render(request, 'projects/add-edit.html', context)
+#	elif request.method == "POST":
+#		return render(request, 'projects/edit-complete', context)
+#
+#@login_required
+#def edit(request, project_slug=None):
+#	project = Project.objects.get(slug=project_slug)
+#	context = {
+#		'title': f'Edit Project: {project.title}',
+#		'project_title': project.title,
+#		'desc': 'editor for a Guy Hopkins ',
+#		'pageclass': 'add-project',
+#	}
+#	if request.method == "GET":
+#		return render(request, 'projects/add-edit.html', context)
+#	elif request.method == "POST":
+#		return render(request, 'projects/edit-complete', context)
