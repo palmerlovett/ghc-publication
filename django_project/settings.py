@@ -28,9 +28,9 @@ URL = f"https://{HOST}/"
 SECRET_KEY = os.environ['DJANGO_SECRET']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = [HOST,
+ALLOWED_HOSTS = ["guyhopkins.net",
                  "lastmansolutions.com",
                  "147.182.128.153",
                  "0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]

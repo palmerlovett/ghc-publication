@@ -12,6 +12,9 @@ class Category(models.Model):
 	def __str(self):
 		return f'{self.name}'
 
+	class Meta:
+		ordering = ['name']
+
 class Owner(models.Model):
 	owner_id = models.AutoField(primary_key=True)
 	name = models.CharField(max_length=100)
@@ -19,12 +22,18 @@ class Owner(models.Model):
 	def __str__(self):
 		return f'{self.name}'
 
+	class Meta:
+		ordering = ['name']
+
 class ArchitectDesigner(models.Model):
 	a_d_id = models.AutoField(primary_key=True)
 	name = models.CharField(max_length=100)
 
 	def __str__(self):
 		return f'{self.name}'
+
+	class Meta:
+		ordering = ['name']
 
 class Project(models.Model):
 	project_id = models.AutoField(primary_key=True)
@@ -37,6 +46,7 @@ class Project(models.Model):
 	desc = models.TextField(default="", blank=True, null=True)
 	
 	owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True, blank=True)
+	second_owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True, blank=True, related_name="second_owner")
 	architect_designer = models.ForeignKey(ArchitectDesigner, on_delete=models.SET_NULL, null=True, blank=True)
 	project_value = models.CharField(max_length=12, default="", null=True, blank=True)
 	start_date = models.DateField(default="", blank=True, null=True)
@@ -71,7 +81,8 @@ class Project(models.Model):
 				self.photo_4.rename_photo(project_title=self.title)
 
 	def __str__(self):
-		return f"{self.title}, {self.desc_head}"
+		addition = ", addition" if self.parent_project else ""
+		return f"{self.title}{addition}"
 
 
 class Photo(models.Model):

@@ -7,7 +7,11 @@
   </p>
   <ul class="checklist">
     {% if project.owner %}
-      <li><strong>Owner:</strong> {{ project.owner }}</li>
+      <li><strong>Owner:</strong> {{ project.owner }}
+        {% if project.second_owner %}
+         / {{ project.second_owner }}
+        {% endif %}
+      </li>
     {% endif %}
     {% if project.architect_designer %}
       <li><strong>Architect/Engineer:</strong> {{ project.architect_designer }}</li>
