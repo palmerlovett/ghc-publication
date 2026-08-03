@@ -11,7 +11,7 @@ from django.conf import settings
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
 	list_display = ('title',)
-	list_filter = ("owner", "architect_designer", "category", "featured")
+	list_filter = ("category", "owner", "architect_designer", "featured")
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
