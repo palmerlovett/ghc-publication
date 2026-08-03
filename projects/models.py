@@ -34,11 +34,11 @@ class Project(models.Model):
 	slug = models.CharField(max_length=100, default="", blank=True)
 
 	desc_head = models.CharField(max_length=100, blank=True, null=True)
-	desc = models.TextField(default="")
+	desc = models.TextField(default="", blank=True, null=True)
 	
-	owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True)
-	architect_designer = models.ForeignKey(ArchitectDesigner, on_delete=models.SET_NULL, null=True)
-	project_value = models.CharField(max_length=12, default="")
+	owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True, blank=True)
+	architect_designer = models.ForeignKey(ArchitectDesigner, on_delete=models.SET_NULL, null=True, blank=True)
+	project_value = models.CharField(max_length=12, default="", null=True, blank=True)
 	start_date = models.DateField(default="", blank=True, null=True)
 	completion_date = models.DateField(default="", blank=True, null=True)
 
