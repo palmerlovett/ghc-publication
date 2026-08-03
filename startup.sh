@@ -1,5 +1,5 @@
 #!/bin/bash
-whoami > /root/tmp_user.txt
+
 sudo systemctl start nginx
 
 cd /root/ghc-publication || exit

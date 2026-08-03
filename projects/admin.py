@@ -11,15 +11,15 @@ from django.conf import settings
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
 	list_display = ('title',)
-	list_filter = ("owner", "architect_designer", "featured")
+	list_filter = ("owner", "architect_designer", "category", "featured")
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
 	list_display = ('name',)
 
-@admin.register(Photo)
-class PhotoAdmin(admin.ModelAdmin):
-	list_display = ('photo_id', 'file')
+#@admin.register(Photo)
+#class PhotoAdmin(admin.ModelAdmin):
+#	list_display = ('photo_id', 'file')
 
 @admin.register(ArchitectDesigner)
 class ArchitectDesigner(admin.ModelAdmin):
