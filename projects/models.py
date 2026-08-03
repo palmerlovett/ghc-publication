@@ -14,6 +14,7 @@ class Category(models.Model):
 
 	class Meta:
 		ordering = ['name']
+		verbose_name_plural = "categories"
 
 class Owner(models.Model):
 	owner_id = models.AutoField(primary_key=True)
