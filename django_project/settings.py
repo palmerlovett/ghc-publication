@@ -149,6 +149,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = f'https://s.{HOST}/'
+STATIC_URL = '/static/'
 STATIC_ROOT = os.environ['STATIC_SERVER_ROOT']
 
 LOGIN_URL = 'admin:login'

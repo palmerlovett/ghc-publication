@@ -721,7 +721,7 @@ ul.projects {
     display: block }
 
   .projects .project .desc {
-    padding-left: 21px;
+    padding-left: 0;
     box-sizing: border-box }
     .projects .project .desc h3 {
       margin-bottom: 14px;
@@ -732,9 +732,13 @@ ul.projects {
     .projects .project .desc iframe {
       border: 1px solid var(--dark) }
 
-  .projects .project .more-projects {
-    padding-left: 21px;
-    margin-top: 35px }
+  @media (min-width:660px) {
+    .projects .project .desc {
+      padding-left: 21px;
+    }
+    .projects .project .more-projects { padding-left: 21px }    
+  }
+  .projects .project .more-projects { margin-top: 35px }
 
 .projects .project .video-wrapper {
   position: relative;
