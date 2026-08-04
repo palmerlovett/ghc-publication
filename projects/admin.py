@@ -17,9 +17,9 @@ class ProjectAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
 	list_display = ('name',)
 
-#@admin.register(Photo)
-#class PhotoAdmin(admin.ModelAdmin):
-#	list_display = ('photo_id', 'file')
+@admin.register(Photo)
+class PhotoAdmin(admin.ModelAdmin):
+	list_display = ('photo_id', 'file')
 
 @admin.register(ArchitectDesigner)
 class ArchitectDesigner(admin.ModelAdmin):

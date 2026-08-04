@@ -39,38 +39,44 @@ class ArchitectDesigner(models.Model):
 class Project(models.Model):
 	project_id = models.AutoField(primary_key=True)
 	title = models.CharField(max_length=100, default="",
-		help_text="The title of this project")
+		help_text="The title of this project (required)")
 
 	parent_project = models.ForeignKey('projects.Project', on_delete=models.SET_NULL, null=True, blank=True,
 		limit_choices_to={"parent_project": None},
-		help_text="If this is the second phase of a previous project please select the previous project above")
+		help_text="If this is the second phase of a previous project, please select the previous project above (optional: use this or a slug)")
 	slug = models.CharField(max_length=100, default="", blank=True,
-		help_text='Determines the url of your project. (guyhopkins.com/projects/your-project-slug) This will be transformed to lowercase and have the spaces turned to dashes')
+		help_text='Creates the url of your project, guyhopkins.com/projects/your-project-slug (optional: leave blank when a Parent Project is selected) ')
 
 	desc_head = models.CharField(max_length=100, blank=True, null=True,
-		help_text="The header above the project description. Especially useful with a parent or child project")
-	desc = models.TextField(default="", blank=True, null=True)
+		help_text="The header above the project description. Especially useful with parent and child projects (optional)")
+	desc = models.TextField(default="", blank=True, null=True,
+		help_text="The full description of this project (optional)")
 	
 	owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True, blank=True,
-		help_text="The owner of the finished project")
+		help_text="The owner of the finished project (optional)")
 	second_owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True, blank=True, related_name="second_owner",
-		help_text="For a second owner. This field can be left blank")
+		help_text="A second owner (optional)")
 	architect_designer = models.ForeignKey(ArchitectDesigner, on_delete=models.SET_NULL, null=True, blank=True,
-		help_text="The architect or design firm")
+		help_text="Architect or Design firm (optional)")
 	project_value = models.CharField(max_length=12, default="", null=True, blank=True,
 		help_text="Please use commas and no dollar sign")
 	start_date = models.DateField(default="", blank=True, null=True)
 	completion_date = models.DateField(default="", blank=True, null=True)
 
-	category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
+	category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True,
+		help_text="for future filters on the projects index (optional)")
 
 	featured = models.BooleanField(default=False,
-		help_text="whether this should be on the list to show on the homepage (only the first five featured will show)")
+		help_text="in the list of projects to be featured on the homepage (the first five featured will show)")
 
-	photo_1 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_1')
-	photo_2 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_2')
-	photo_3 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_3')
-	photo_4 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_4')
+	photo_1 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_1',
+		help_text="Choose an existing photo or add and upload a new one with the plus button (optional)")
+	photo_2 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_2',
+		help_text="Choose an existing photo or add and upload a new one with the plus button (optional)")
+	photo_3 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_3',
+		help_text="Choose an existing photo or add and upload a new one with the plus button (optional)")
+	photo_4 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_4',
+		help_text="Choose an existing photo or add and upload a new one with the plus button (optional)")
 
 	class Meta:
 		ordering = ['project_id']
