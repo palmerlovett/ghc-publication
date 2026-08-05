@@ -155,12 +155,12 @@ class Photo(models.Model):
 	@property
 	def thumb_url(self):
 		name, ext = os.path.splitext(self.file.name)
-		return f"{name}.thumb{ext}"
+		return f"{settings.MEDIA_URL}{name}.thumb{ext}"
 
 	@property
 	def desktop_url(self):
 		name, ext = os.path.splitext(self.file.name)
-		return f"{name}.desktop{ext}"
+		return f"{settings.MEDIA_URL}{name}.desktop{ext}"
 
 
 	def rename_photo(self, project_title):
