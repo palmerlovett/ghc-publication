@@ -177,7 +177,7 @@ class Photo(models.Model):
 
 
 		new_path = self.generate_file_slug(project_title)
-		os.rename(self.file.path, new_path)
+		os.rename(os.join(settings.MEDIA_ROOT, self.file.path, new_path))
 		new_name = new_path.replace(settings.MEDIA_ROOT, "")
 		Photo.objects.filter(pk=self.pk).update(file=new_name)
 		self.file.name = new_name
@@ -186,7 +186,7 @@ class Photo(models.Model):
 #		self.file = file
 		print(f'self.file.desktop {self.file.desktop}')
 
-		print(f"os.rename file.path: {file.path} to new_path: {new_path}")
+		#print(f"os.rename file.path: {file.path} to new_path: {new_path}")
 		print(f'')
 		print(f'file.path: {file.path}, file.url: {file.url}, file.thumb: {file.thumb}, file.desktop: {file.desktop}')
 		print(f'')
