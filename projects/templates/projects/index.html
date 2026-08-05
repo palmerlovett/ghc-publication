@@ -19,14 +19,10 @@
   	{% for project in projects %}
     <li>
       <a href="{% url 'projects:project' project.slug %}">
-        <img src="{{ project.photo_1.file }}" alt="{{ project.title }}">
+        <img src="https://m.guyhopkins.net/{{ project.photo_1.thumb_path }}" alt="{{ project.title }}">
         <h4>{{ project.title }}</h4>
 
       </a>
-      {{ project.photo_1.file.thumb }}<br>
-      {{ project.photo_1.file.desktop }}<br>
-      {{ project.photo_1.file.url }}<br>
-
     </li>
     {% endfor %}
   </ul>
