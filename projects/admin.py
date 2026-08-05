@@ -10,8 +10,8 @@ from django.conf import settings
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-	list_display = ('title',)
-	list_filter = ("category", "owner", "architect_designer", "featured")
+	list_display = ('title', 'desc_head')
+	list_filter = ("category", "architect_designer", "featured", "listed")
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):

@@ -64,18 +64,23 @@ class Project(models.Model):
 	completion_date = models.DateField(default="", blank=True, null=True)
 
 	category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True,
-		help_text="for future filters on the projects index (optional)")
+		help_text="For future filters on the projects index (optional)")
 
 	featured = models.BooleanField(default=False,
-		help_text="in the list of projects to be featured on the homepage (the first five featured will show)")
+		help_text="In the list of projects to be featured on the homepage (the first five featured will show)")
 
-	photo_1 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_1',
+	listed = models.BooleanField(default=True,
+		help_text="Whether or not this page is listed on the Projects index page (it will still accessible by url)")
+
+
+
+	photo_1 = models.ForeignKey('projects.Photo', on_delete=models.SET_NULL, blank=True, default="", null=True, related_name='Photo_1',
 		help_text="Choose an existing photo or add and upload a new one with the plus button (optional)")
-	photo_2 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_2',
+	photo_2 = models.ForeignKey('projects.Photo', on_delete=models.SET_NULL, blank=True, default="", null=True, related_name='Photo_2',
 		help_text="Choose an existing photo or add and upload a new one with the plus button (optional)")
-	photo_3 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_3',
+	photo_3 = models.ForeignKey('projects.Photo', on_delete=models.SET_NULL, blank=True, default="", null=True, related_name='Photo_3',
 		help_text="Choose an existing photo or add and upload a new one with the plus button (optional)")
-	photo_4 = models.ForeignKey('projects.Photo', on_delete=models.CASCADE, blank=True, default="", null=True, related_name='Photo_4',
+	photo_4 = models.ForeignKey('projects.Photo', on_delete=models.SET_NULL, blank=True, default="", null=True, related_name='Photo_4',
 		help_text="Choose an existing photo or add and upload a new one with the plus button (optional)")
 
 	class Meta:
@@ -98,38 +103,93 @@ class Project(models.Model):
 				self.photo_4.rename_photo(project_title=self.title)
 
 	def __str__(self):
-		addition = ", addition" if self.parent_project else ""
-		return f"{self.title}{addition}"
+		if self.parent_project:
+			addition = ', {self.desc_head} addition'
+			return f"{self.title}{addition}"
+		return self.title
 
 
 class Photo(models.Model):
+	from imagefield.fields import ImageField
+	from django.core.files.storage import FileSystemStorage
+
+	# Force the storage class to use your absolute path explicitly
+	#custom_storage = FileSystemStorage(
+	#	location=settings.MEDIA_ROOT,  # Pins it to /home/runner/workspace/media/
+	#	base_url=settings.MEDIA_URL
+	#)
 	photo_id = models.AutoField(primary_key=True)
-	file = models.ImageField(upload_to="projects_tmp")
+	file = ImageField(upload_to="",
+		#storage=custom_storage,
+		formats={"thumb": ["default", ("crop", (300, 200))],
+						 "desktop": ["default", ("thumbnail", (660, 999))],},
+						 auto_add_fields=True)
+
+	def generate_file_slug(self, project_title=None, format=None):
+		filename, file_extension = os.path.splitext(self.file.path)
+		new_filename = f"projects/{slugify(project_title)}-{self.photo_id}"
+		if (format): new_filename += f".{format}"
+		new_filename += f"{file_extension}"
+		new_path = os.path.join(settings.MEDIA_ROOT, f'{new_filename}')
+
+		return new_path
+
+	@property
+	def thumb_path(self):
+		if self.file:
+			# 1. Ask django-imagefield for the raw internal storage path
+			relative_path = self.file.process('thumb')
+			# 2. Return the absolute server filesystem location
+			return os.path.join(settings.MEDIA_ROOT, relative_path)
+		return None
+
+	@property
+	def desktop_path(self):
+		if self.file:
+			# 1. Ask django-imagefield for the raw internal storage path
+			relative_path = self.file.process('desktop')
+			# 2. Return the absolute server filesystem location
+			return os.path.join(settings.MEDIA_ROOT, relative_path)
+		return None
+
 
 	def rename_photo(self, project_title):
+		from django.core.files.base import ContentFile
 		file = self.file
-		filename, file_extension = os.path.splitext(file.path)
-		new_filename = f"projects/{slugify(project_title)}-{self.photo_id}{file_extension}"
-		new_path = os.path.join(settings.MEDIA_ROOT, new_filename)
+		print(f'')
+		print(f'file.path: {file.path}, file.url: {file.url}, file.thumb: {file.thumb}, file.desktop: {file.desktop}')
+		print(f'')
 
-		print(f'checking if photo file needs to be moved and renamed from projects_tmp')
-		print(f'self.file.path: {file.path} new_path: {new_path}')
-		print(f"comparing the two to determine if we need to save...")
-		if file.path == new_path:
-			print("photo has already been saved. path: {file.path}")
-		else:
-			print(f'photo not yet saved')
-			print(f"current filepath: {file.path}, new filepath: {new_path}")
-			print(f"os.rename file.path: {file.path} to new_path: {new_path}")
-			os.rename(file.path, new_path) #not needed ??, self.photo.save(update_fields) works better
-			print(f'changing file.name')
-			file.name = new_filename
-			print(f'setting self.photo.file as file and saving self.photo')
-			self.file = file
-			self.save(update_fields=['file'])
-			print(f"current filepath (self.photo): {self.file.path}, new filepath: {new_path}")
 
-			print(f"saved photo to new path")
+		old_thumb_path = self.thumb_path
+		print(f"old_thumb_path: {old_thumb_path}")
+		new_thumb_path = self.generate_file_slug(project_title, 'thumb')
+		print(f'changing file.thumb')
+		print('moving thumb w/os.rename {old_thumb}, {new_thumb_path}')
+		os.rename(old_thumb_path, new_thumb_path)
+
+
+		old_desktop_path = self.desktop_path
+		print(f"old_desktop_path: {old_desktop_path}")
+		new_desktop_path = self.generate_file_slug(project_title, 'desktop')
+		print(f"moving file w/os.rename {old_desktop_path}, {new_desktop_path}")
+		os.rename(old_desktop_path, new_desktop_path)
+
+
+		new_path = self.generate_file_slug(project_title)
+		os.rename(self.file.path, new_path)
+		new_name = new_path.replace(settings.MEDIA_ROOT, "")
+		Photo.objects.filter(pk=self.pk).update(file=new_name)
+		self.file.name = new_name
+
+#		print(f'setting self.photo.file as file and saving self.photo')
+#		self.file = file
+		print(f'self.file.desktop {self.file.desktop}')
+
+		print(f"os.rename file.path: {file.path} to new_path: {new_path}")
+		print(f'')
+		print(f'file.path: {file.path}, file.url: {file.url}, file.thumb: {file.thumb}, file.desktop: {file.desktop}')
+		print(f'')
 
 	def delete(self, *args, **kwargs):
 		print(f'deleting file when photo row is deleted')
@@ -141,8 +201,8 @@ class Photo(models.Model):
 		print(f'continue to deleting row')
 		super().delete(*args, **kwargs)
 
-	def save(self, *args, **kwargs):
-		super().save(*args, **kwargs)
+#	def save(self, *args, **kwargs):
+#		super().save(*args, **kwargs)
 
 
 	def __str__(self):

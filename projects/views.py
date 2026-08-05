@@ -5,7 +5,7 @@ from .models import Project
 # Create your views here.
 def index(request):
 	from .models import Project
-	projects = Project.objects.filter(parent_project__isnull=True)
+	projects = Project.objects.filter(parent_project__isnull=True, listed=True)
 	context = {
 		'title': 'Projects',
 		'desc': 'Construction projects completed by Guy Hopkins Construction.',

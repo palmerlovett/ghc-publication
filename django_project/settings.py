@@ -28,7 +28,7 @@ URL = f"https://{HOST}/"
 SECRET_KEY = os.environ['DJANGO_SECRET']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["guyhopkins.net",
                  "lastmansolutions.com",
@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_distill',
+    'imagefield',
 
     'web',
     'projects',
@@ -110,9 +111,8 @@ STORAGES = {
     },
 }
 
-#GS_BUCKET_NAME = 'ghc-media'
-MEDIA_URL = f'https://m.{HOST}/'
-MEDIA_ROOT = os.environ['MEDIA_SERVER_ROOT']
+
+IMAGEFIELD_AUTOGENERATE = True
 
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
@@ -147,6 +147,10 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
+
+MEDIA_URL = f'https://m.{HOST}/'
+MEDIA_ROOT = "/home/runner/workspace/media/"#os.environ['MEDIA_SERVER_ROOT']
+
 
 STATIC_URL = f'https://s.{HOST}/'
 #STATIC_URL = '/static/'
