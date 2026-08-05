@@ -130,7 +130,7 @@ class Photo(models.Model):
 		new_filename = f"projects/{slugify(project_title)}-{self.photo_id}"
 		if (format): new_filename += f".{format}"
 		new_filename += f"{file_extension}"
-		new_path = os.path.join(settings.MEDIA_ROOT, f'{new_filename}')
+		new_path = os.path.join(settings.MEDIA_ROOT, new_filename.lstrip('/'))
 
 		return new_path
 
@@ -140,17 +140,25 @@ class Photo(models.Model):
 			# 1. Ask django-imagefield for the raw internal storage path
 			relative_path = self.file.process('thumb')
 			# 2. Return the absolute server filesystem location
-			return os.path.join(settings.MEDIA_ROOT, relative_path)
+			return os.path.join(settings.MEDIA_ROOT, relative_path.lstrip('/'))
 		return None
 
 	@property
 	def desktop_path(self):
 		if self.file:
 			# 1. Ask django-imagefield for the raw internal storage path
-			relative_path = self.file.process('desktop')
+			relative_path = self.file.process('desktop').lstrip('/')
 			# 2. Return the absolute server filesystem location
-			return os.path.join(settings.MEDIA_ROOT, relative_path)
+			return os.path.join(settings.MEDIA_ROOT, relative_path.lstrip('/'))
 		return None
+
+	@property
+	def thumb_url(self):
+		return f"{settings.MEDIA_URL}{self.thumb_path.replace(settings.MEDIA_ROOT, "")}"
+
+	@property
+	def desktop_url(self):
+		return f"{settings.MEDIA_URL}{self.desktop_path.replace(settings.MEDIA_ROOT, "")}"
 
 
 	def rename_photo(self, project_title):
@@ -177,7 +185,7 @@ class Photo(models.Model):
 
 
 		new_path = self.generate_file_slug(project_title)
-		os.rename(os.path.join(settings.MEDIA_ROOT, self.file.path), new_path)
+		os.rename(self.file.path, new_path)
 		new_name = new_path.replace(settings.MEDIA_ROOT, "")
 		Photo.objects.filter(pk=self.pk).update(file=new_name)
 		self.file.name = new_name
