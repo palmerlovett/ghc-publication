@@ -177,7 +177,7 @@ class Photo(models.Model):
 
 
 		new_path = self.generate_file_slug(project_title)
-		os.rename(os.join(settings.MEDIA_ROOT, self.file.path, new_path))
+		os.rename(os.path.join(settings.MEDIA_ROOT, self.file.path, new_path))
 		new_name = new_path.replace(settings.MEDIA_ROOT, "")
 		Photo.objects.filter(pk=self.pk).update(file=new_name)
 		self.file.name = new_name
