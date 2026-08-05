@@ -149,7 +149,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 MEDIA_URL = f'https://m.{HOST}/'
-MEDIA_ROOT = "/home/runner/workspace/media/"#os.environ['MEDIA_SERVER_ROOT']
+MEDIA_ROOT = os.environ['MEDIA_SERVER_ROOT']
 
 
 STATIC_URL = f'https://s.{HOST}/'
