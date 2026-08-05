@@ -188,7 +188,7 @@ class Photo(models.Model):
 
 		#print(f"os.rename file.path: {file.path} to new_path: {new_path}")
 		print(f'')
-		print(f'file.path: {file.path}, file.url: {file.url}, file.thumb: {file.thumb}, file.desktop: {file.desktop}')
+		#print(f'file.path: {file.path}, file.url: {file.url}, file.thumb: {file.thumb}, file.desktop: {file.desktop}')
 		print(f'')
 
 	def delete(self, *args, **kwargs):
