@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 """Django's command-line utility for administrative tasks."""
 import os
+import multiprocessing
 import sys
 
+if sys.platform != "win32":
+    multiprocessing.set_start_method("fork", force=True)
 
 def main():
     """Run administrative tasks."""
