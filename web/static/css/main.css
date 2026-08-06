@@ -724,6 +724,7 @@ ul.projects {
     padding-left: 0;
     box-sizing: border-box }
     .projects .project .desc h3 {
+      padding-top: 0;
       margin-bottom: 14px;
       border-bottom: 2px solid #333 }
     .projects .project .desc p {}
