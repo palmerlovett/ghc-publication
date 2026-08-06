@@ -25,5 +25,8 @@
     {% if project.completion_date %}
       <li><strong>Completion Date:</strong> {{ project.completion_date }}</li>
     {% endif %}
+    {% if project.duration %}
+      <li><strong>Project Duration:</strong> {{ project.duration }}</li>
+    {% endif %}
   </ul>
 </div>

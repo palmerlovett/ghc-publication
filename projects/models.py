@@ -86,6 +86,14 @@ class Project(models.Model):
 	class Meta:
 		ordering = ['project_id']
 
+	@property
+	def duration(self):
+		from django.utils.timesince import timesince
+		"""Returns a timedelta object representing the duration."""
+		if self.start_date and self.completion_date:
+		  return timesince(self.start_date, self.completion_date)
+		return None
+
 	def save(self, *args, **kwargs):
 		if self.slug:
 			self.slug = slugify(self.slug)
@@ -133,6 +141,7 @@ class Photo(models.Model):
 		new_path = os.path.join(settings.MEDIA_ROOT, new_filename.lstrip('/'))
 
 		return new_path
+
 
 	@property
 	def thumb_path(self):
