@@ -8,19 +8,36 @@ from django.db.models import Q
 def index(request, category=None, owner=None, designer=None):
 	from .models import Project
 	projects = Project.objects.filter(parent_project__isnull=True, listed=True)
-
+	this_filter = False
 	if category:
+		from .models import Category
 		projects = projects.filter(category__slug=category)
+		pretext = "Category"
+		this_filter = Category.objects.get(slug=category)
 	if designer:
-		projects = projects.filter(designer__slug=designer)
+		from .models import ArchitectDesigner
+		projects = projects.filter(architect_designer__slug=designer)
+		pretext = "Architect / Engineer"
+		this_filter = ArchitectDesigner.objects.get(slug=designer)
 	if owner:
+		from .models import Owner
 		projects = projects.filter(Q(owner__slug=owner) | Q(second_owner__slug=owner))
+		pretext = "Owner"
+		this_filter = Owner.objects.get(slug=owner)
+
+	if this_filter:
+		filter_title = f"{pretext}: {this_filter.name}"
+	else:
+		filter_title = ""
+		this_filter = 'false'
 
 	context = {
 		'title': 'Projects',
 		'desc': 'Construction projects completed by Guy Hopkins Construction.',
 		'pageclass': 'projects',
-		'projects': projects
+		'projects': projects,
+		'filter': this_filter,
+		'filter_title': filter_title
 	}
 	return render(request, 'projects/index.html', context)
 

@@ -7,14 +7,25 @@
   </p>
   <ul class="checklist">
     {% if project.owner %}
-      <li><strong>Owner:</strong> {{ project.owner }}
+      <li><strong>Owner:</strong>
+        <a href="{% url 'projects:filter owner' project.owner.slug %}">
+          {{ project.owner }}
+        </a>
         {% if project.second_owner %}
-         / {{ project.second_owner }}
+          / 
+         <a href="{% url 'projects:filter owner' project.second_owner.slug %}">
+          {{ project.second_owner }}
+          </a>
         {% endif %}
       </li>
     {% endif %}
     {% if project.architect_designer %}
-      <li><strong>Architect/Engineer:</strong> {{ project.architect_designer }}</li>
+      <li>
+        <strong>Architect/Engineer:</strong>
+        <a href="{% url 'projects:filter designer' project.architect_designer.slug %}">
+          {{ project.architect_designer }}
+        </a>
+      </li>
     {% endif %}
     {% if project.project_value %}
       <li><strong>Project Value:</strong> ${{ project.project_value }}</li>

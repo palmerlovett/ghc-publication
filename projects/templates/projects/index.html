@@ -4,7 +4,7 @@
   <div class="container">
     <div class="flex-fifths allscreens">
       <div class="three-fifths">
-        <h2>Construction Projects</h2>
+        <h2>{{ filter_title|default:"Construction Projects " }}</h2>
       </div>
       <div class="two-fifths">
         <div class="breadcrumbs">
@@ -21,10 +21,14 @@
       <a href="{% url 'projects:project' project.slug %}">
         <img src="{{ project.photo_1.thumb_url }}" alt="{{ project.title }}">
         <h4>{{ project.title }}</h4>
-
       </a>
     </li>
     {% endfor %}
   </ul>
+  {% if this_filter != 'false' %}
+    <a class="button solid" style="float:right" href="{% url 'projects:index' %}">
+    ◄ Back To All Projects</a>
+    <br style="clear: both;">
+  {% endif %}
 </div>
 {% endblock %}
