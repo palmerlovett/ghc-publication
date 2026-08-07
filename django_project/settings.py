@@ -18,8 +18,8 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-HOST = 'guyhopkins.net'
-URL = f"https://{HOST}/"
+HOST = 'guyhopkins.com'
+URL = f"http://{HOST}/"
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
@@ -30,10 +30,12 @@ SECRET_KEY = os.environ['DJANGO_SECRET']
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["guyhopkins.net",
+ALLOWED_HOSTS = ["guyhopkins.com",
+                 "guyhopkins.net",
                  "0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]
 
-CSRF_TRUSTED_ORIGINS = ["https://guyhopkins.net",
+CSRF_TRUSTED_ORIGINS = ["http://guyhopkins.com",
+                        "https://guyhopkins.net",
                         "https://0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]
 
 # Application definition
@@ -141,10 +143,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-MEDIA_URL = f'https://m.{HOST}/'
+MEDIA_URL = f'http://m.{HOST}/'
 MEDIA_ROOT = os.environ['MEDIA_SERVER_ROOT']
 
-STATIC_URL = f'https://s.{HOST}/'
+STATIC_URL = f'http://s.{HOST}/'
 STATIC_ROOT = os.environ['STATIC_SERVER_ROOT']
 
 LOGIN_URL = 'admin:login'
