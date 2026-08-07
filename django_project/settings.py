@@ -28,7 +28,7 @@ URL = f"https://{HOST}/"
 SECRET_KEY = os.environ['DJANGO_SECRET']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["guyhopkins.net",
                  "lastmansolutions.com",
@@ -144,16 +144,17 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 MEDIA_URL = f'https://m.{HOST}/'
 MEDIA_ROOT = os.environ['MEDIA_SERVER_ROOT']
 
-
 STATIC_URL = f'https://s.{HOST}/'
-#STATIC_URL = '/static/'
 STATIC_ROOT = os.environ['STATIC_SERVER_ROOT']
 
 LOGIN_URL = 'admin:login'
+
+if os.environ['SERVER'] == 'dev':
+    DEBUG = True
+    STATIC_URL = '/static/'
