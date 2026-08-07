@@ -46,8 +46,8 @@ def project(request, project_slug=None):
 	project = Project.objects.get(slug=project_slug)
 	next_project = Project.objects.filter(parent_project__isnull=True, project_id__gt=project.project_id).order_by('project_id').first()
 	prev_project = Project.objects.filter(parent_project__isnull=True, project_id__lt=project.project_id).order_by('project_id').first()
-	first = Project.objects.filter(parent_project__isnull=True, project_id__gt=0).order_by('project_id').first()
-	last = Project.objects.filter(parent_project__isnull=True, project_id__gt=0).order_by('project_id').last()
+	first = Project.objects.filter(parent_project__isnull=True, listed=True, project_id__gt=0).order_by('project_id').first()
+	last = Project.objects.filter(parent_project__isnull=True, listed=True, project_id__gt=0).order_by('project_id').last()
 	if next_project is None:
 		next_project = first
 	if prev_project is None:
