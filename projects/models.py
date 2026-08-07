@@ -116,13 +116,13 @@ class Project(models.Model):
 		super().save(*args, **kwargs)
 		
 		if self.slug:
-			if self.photo_1:
+			if self.photo_1 and (self.photo_1.processed == False):
 				self.photo_1.rename_photo(project_title=self.title)
-			if self.photo_2:
+			if self.photo_2 and (self.photo_2.processed == False):
 				self.photo_2.rename_photo(project_title=self.title)
-			if self.photo_3:
+			if self.photo_3 and (self.photo_3.processed == False):
 				self.photo_3.rename_photo(project_title=self.title)
-			if self.photo_4:
+			if self.photo_4 and (self.photo_4.processed == False):
 				self.photo_4.rename_photo(project_title=self.title)
 
 	def __str__(self):
@@ -147,6 +147,8 @@ class Photo(models.Model):
 		formats={"thumb": ["default", ("crop", (300, 200))],
 						 "desktop": ["default", ("thumbnail", (660, 999))],},
 						 auto_add_fields=True)
+
+	processed = models.BooleanField(default=True, editable=True)
 
 	def generate_file_slug(self, project_title=None, format=None):
 		filename, file_extension = os.path.splitext(self.file.path)
@@ -215,6 +217,7 @@ class Photo(models.Model):
 		Photo.objects.filter(pk=self.pk).update(file=new_name)
 		self.file.name = new_name
 
+		self.processed = True
 #		print(f'setting self.photo.file as file and saving self.photo')
 #		self.file = file
 		print(f'self.file.desktop {self.file.desktop}')
