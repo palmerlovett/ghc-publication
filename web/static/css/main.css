@@ -172,7 +172,7 @@ html, body { padding: 0; margin: 0 }
 html {
   font-family: 'PT Sans', sans-serif }
 
-body { background: white }
+body { background: var(--dark) }
 
 h1, h2, h3, h4, h5, h6 {
   padding: 7px 0 0 0;
@@ -465,6 +465,20 @@ body:before {
   
 }
 
+
+
+.content { background:white }
+
+@media screen and (min-height: 520px) {
+  .content { min-height: 480px }
+}
+
+
+.content .content-page {
+  background: white;
+}
+
+
 .content .content-subhead {
   border-top: 1px solid rgba(0, 0, 0, 0.1);
   border-bottom: 1px solid rgba(0, 0, 0, 0.1);
@@ -489,9 +503,6 @@ body:before {
     float: right }
 }
 
-.content .content-page {
-  background: white;
-}
 
 
 .content .content-page p {
