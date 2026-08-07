@@ -617,6 +617,9 @@ ul.projects {
       display: block }
     ul.projects li a img {
       display: block;
+      height: auto;           /* Allows the aspect ratio to dictate the height */
+      aspect-ratio: 16 / 11;   /* Forces a 16:9 proportion (Width / Height) */
+      object-fit: cover; 
       width: 100% }
     ul.projects li a h4 {
       position: absolute;
@@ -702,6 +705,9 @@ ul.projects {
   width: 100%;
   border: 1px solid white;
   outline: 3px solid #A3A3A3;
+  height: auto;           /* Allows the aspect ratio to dictate the height */
+  aspect-ratio: 16 / 16;   /* Forces a 16:9 proportion (Width / Height) */
+  object-fit: cover; 
   display: block }
 
 .about .profile h3,
@@ -729,6 +735,9 @@ ul.projects {
     border: 1px solid var(--dark);
     border-radius: 2px;
     margin-bottom: 14px;
+    height: auto;           /* Allows the aspect ratio to dictate the height */
+    aspect-ratio: 16 / 10;   /* Forces a 16:9 proportion (Width / Height) */
+    object-fit: cover; 
     display: block }
 
   .projects .project .desc {
