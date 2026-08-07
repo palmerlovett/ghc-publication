@@ -116,13 +116,13 @@ class Project(models.Model):
 		super().save(*args, **kwargs)
 		
 		if self.slug:
-			if self.photo_1 and (self.photo_1.processed == False):
+			if self.photo_1 and (self.photo_1.processed == True):
 				self.photo_1.rename_photo(project_title=self.title)
-			if self.photo_2 and (self.photo_2.processed == False):
+			if self.photo_2 and (self.photo_2.processed == True):
 				self.photo_2.rename_photo(project_title=self.title)
-			if self.photo_3 and (self.photo_3.processed == False):
+			if self.photo_3 and (self.photo_3.processed == True):
 				self.photo_3.rename_photo(project_title=self.title)
-			if self.photo_4 and (self.photo_4.processed == False):
+			if self.photo_4 and (self.photo_4.processed == True):
 				self.photo_4.rename_photo(project_title=self.title)
 
 	def __str__(self):
