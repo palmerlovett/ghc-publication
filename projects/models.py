@@ -114,16 +114,15 @@ class Project(models.Model):
 			self.slug = slugify(self.slug)
 
 		super().save(*args, **kwargs)
-		
-		if self.slug:
-			if self.photo_1 and (self.photo_1.processed == True):
-				self.photo_1.rename_photo(project_title=self.title)
-			if self.photo_2 and (self.photo_2.processed == True):
-				self.photo_2.rename_photo(project_title=self.title)
-			if self.photo_3 and (self.photo_3.processed == True):
-				self.photo_3.rename_photo(project_title=self.title)
-			if self.photo_4 and (self.photo_4.processed == True):
-				self.photo_4.rename_photo(project_title=self.title)
+	
+		if self.photo_1 and (self.photo_1.processed == False):
+			self.photo_1.rename_photo(project_title=self.title)
+		if self.photo_2 and (self.photo_2.processed == False):
+			self.photo_2.rename_photo(project_title=self.title)
+		if self.photo_3 and (self.photo_3.processed == False):
+			self.photo_3.rename_photo(project_title=self.title)
+		if self.photo_4 and (self.photo_4.processed == False):
+			self.photo_4.rename_photo(project_title=self.title)
 
 	def __str__(self):
 		if self.parent_project:
@@ -216,11 +215,12 @@ class Photo(models.Model):
 		new_name = new_path.replace(settings.MEDIA_ROOT, "")
 		Photo.objects.filter(pk=self.pk).update(file=new_name)
 		self.file.name = new_name
-
-		self.processed = True
 #		print(f'setting self.photo.file as file and saving self.photo')
 #		self.file = file
 		print(f'self.file.desktop {self.file.desktop}')
+
+		self.processed = True
+		self.save()
 
 		#print(f"os.rename file.path: {file.path} to new_path: {new_path}")
 		print(f'')
