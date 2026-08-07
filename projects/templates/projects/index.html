@@ -25,10 +25,20 @@
     </li>
     {% endfor %}
   </ul>
-  {% if this_filter != 'false' %}
+  {% if this_filter %}
     <a class="button solid" style="float:right" href="{% url 'projects:index' %}">
     ◄ Back To All Projects</a>
     <br style="clear: both;">
+  {% elif False %}
+    <ul class="filterlist">
+    {% for cat in cats %}
+      <li>
+        <a href="{% url 'projects:filter category' cat.slug %}">
+          {{ cat.name }}
+        </a>
+      </li>
+    {% endfor %}
+    </ul>
   {% endif %}
 </div>
 {% endblock %}

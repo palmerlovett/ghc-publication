@@ -6,8 +6,9 @@ from django.db.models import Q
 
 # Create your views here.
 def index(request, category=None, owner=None, designer=None):
-	from .models import Project
+	from .models import Project, Category
 	projects = Project.objects.filter(parent_project__isnull=True, listed=True)
+	cats = Category.objects.all()
 	this_filter = False
 	if category:
 		from .models import Category
@@ -29,7 +30,6 @@ def index(request, category=None, owner=None, designer=None):
 		filter_title = f"{pretext}: {this_filter.name}"
 	else:
 		filter_title = ""
-		this_filter = 'false'
 
 	context = {
 		'title': 'Projects',
@@ -37,7 +37,8 @@ def index(request, category=None, owner=None, designer=None):
 		'pageclass': 'projects',
 		'projects': projects,
 		'filter': this_filter,
-		'filter_title': filter_title
+		'filter_title': filter_title,
+		'cats': cats,
 	}
 	return render(request, 'projects/index.html', context)
 

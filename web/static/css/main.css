@@ -26,8 +26,11 @@ p {
 }
 
 a {
-  text-decoration: none; }
-a:hover { color: var(--ghc-red) }
+  color: var(--ghc-red);
+  text-decoration: none }
+a:hover {
+  text-decoration: underline;
+  color: var(--ghc-red) }
 
 a.button {
   font: 14px 'Tee Frank Heavy', sans-serif;
@@ -665,6 +668,21 @@ ul.projects {
 
 }
 
+
+
+ul.filterlist {
+  padding: 14px 0; margin: 0;
+  display: block;
+  width: 100%;
+  text-align: center;
+  list-style-type: none }
+
+  ul.filterlist li {
+    display: inline }
+  ul.filterlist li:not(:last-child):after {
+    content: ' / ' }
+    ul.filterlist li a {}
+      ul.filterlist li a.active { color: black }
 
 
 /*===============

@@ -14,7 +14,7 @@ class Category(models.Model):
 		self.slug = slugify(self.name)
 		super().save(*args, **kwargs)
 
-	def __str(self):
+	def __str__(self):
 		return f'{self.name}'
 
 	class Meta:
@@ -72,7 +72,7 @@ class Project(models.Model):
 	second_owner = models.ForeignKey(Owner, on_delete=models.SET_NULL, null=True, blank=True, related_name="second_owner",
 		help_text="A second owner (optional)")
 	architect_designer = models.ForeignKey(ArchitectDesigner, on_delete=models.SET_NULL, null=True, blank=True,
-		help_text="Architect or Design firm (optional)")
+		help_text="Architect or Engineer firm (optional)")
 	project_value = models.CharField(max_length=12, default="", null=True, blank=True,
 		help_text="Please use commas and no dollar sign")
 	start_date = models.DateField(default="", blank=True, null=True)

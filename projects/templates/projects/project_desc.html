@@ -27,6 +27,14 @@
         </a>
       </li>
     {% endif %}
+    {% if project.category %}
+      <li>
+        <strong>Category:</strong>
+        <a href="{% url 'projects:filter category' project.category.slug %}">
+          {{ project.category }}
+        </a>
+      </li>
+    {% endif %}
     {% if project.project_value %}
       <li><strong>Project Value:</strong> ${{ project.project_value }}</li>
     {% endif %}
