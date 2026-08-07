@@ -220,7 +220,7 @@ class Photo(models.Model):
 		print(f'self.file.desktop {self.file.desktop}')
 
 		self.processed = True
-		self.save(update_fields['processed'])
+		self.save(update_fields=['processed'])
 
 		#print(f"os.rename file.path: {file.path} to new_path: {new_path}")
 		print(f'')
