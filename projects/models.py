@@ -148,7 +148,7 @@ class Photo(models.Model):
 						 "desktop": ["default", ("thumbnail", (660, 999))],},
 						 auto_add_fields=True)
 
-	processed = models.BooleanField(default=True, editable=True)
+	processed = models.BooleanField(default=False, editable=False)
 
 	def generate_file_slug(self, project_title=None, format=None):
 		filename, file_extension = os.path.splitext(self.file.path)
