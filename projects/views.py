@@ -2,10 +2,20 @@ from django.shortcuts import render
 from django.utils.safestring import mark_safe
 from django.contrib.auth.decorators import login_required
 from .models import Project
+from django.db.models import Q
+
 # Create your views here.
-def index(request):
+def index(request, category=None, owner=None, designer=None):
 	from .models import Project
 	projects = Project.objects.filter(parent_project__isnull=True, listed=True)
+
+	if category:
+		projects = projects.filter(category__slug=category)
+	if designer:
+		projects = projects.filter(designer__slug=designer)
+	if owner:
+		projects = projects.filter(Q(owner__slug=owner) | Q(second_owner__slug=owner))
+
 	context = {
 		'title': 'Projects',
 		'desc': 'Construction projects completed by Guy Hopkins Construction.',

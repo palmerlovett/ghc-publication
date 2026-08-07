@@ -7,7 +7,12 @@ from django.utils.text import slugify
 
 class Category(models.Model):
 	category_id = models.AutoField(primary_key=True)
-	name = models.CharField(max_length=35)
+	name = models.CharField(max_length=100)
+	slug = models.CharField(max_length=100, blank=True, null=True, editable=False)
+
+	def save(self, *args, **kwargs):
+		self.slug = slugify(self.name)
+		super().save(*args, **kwargs)
 
 	def __str(self):
 		return f'{self.name}'
@@ -19,6 +24,11 @@ class Category(models.Model):
 class Owner(models.Model):
 	owner_id = models.AutoField(primary_key=True)
 	name = models.CharField(max_length=100)
+	slug = models.CharField(max_length=100, blank=True, null=True, editable=False)
+
+	def save(self, *args, **kwargs):
+		self.slug = slugify(self.name)
+		super().save(*args, **kwargs)
 
 	def __str__(self):
 		return f'{self.name}'
@@ -29,6 +39,11 @@ class Owner(models.Model):
 class ArchitectDesigner(models.Model):
 	a_d_id = models.AutoField(primary_key=True)
 	name = models.CharField(max_length=100)
+	slug = models.CharField(max_length=100, blank=True, null=True, editable=False)
+
+	def save(self, *args, **kwargs):
+		self.slug = slugify(self.name)
+		super().save(*args, **kwargs)
 
 	def __str__(self):
 		return f'{self.name}'

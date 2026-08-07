@@ -9,4 +9,7 @@ urlpatterns = [
     #path('add/', views.add, name="add"),
     #path('edit/<path:project_slug>/', views.edit, name="edit"),
     path('<path:project_slug>/', views.project, name="project"),
+    path('category/<path:category>', views.index, name="filter category"),
+    path('designer/<path:designer>', views.index, name="filter designer"),
+    path('owner/<path:owner>', views.index, name="filter owner")
 ]
