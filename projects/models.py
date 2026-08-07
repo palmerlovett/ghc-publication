@@ -214,13 +214,13 @@ class Photo(models.Model):
 		os.rename(self.file.path, new_path)
 		new_name = new_path.replace(settings.MEDIA_ROOT, "")
 		Photo.objects.filter(pk=self.pk).update(file=new_name)
-		self.file.name = new_name
+		self.file.name = new_name.lstrip('/')
 #		print(f'setting self.photo.file as file and saving self.photo')
 #		self.file = file
 		print(f'self.file.desktop {self.file.desktop}')
 
 		self.processed = True
-		self.save()
+		self.save(update_fields['processed'])
 
 		#print(f"os.rename file.path: {file.path} to new_path: {new_path}")
 		print(f'')
