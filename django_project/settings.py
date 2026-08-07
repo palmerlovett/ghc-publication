@@ -31,12 +31,9 @@ SECRET_KEY = os.environ['DJANGO_SECRET']
 DEBUG = False
 
 ALLOWED_HOSTS = ["guyhopkins.net",
-                 "lastmansolutions.com",
-                 "147.182.128.153",
                  "0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]
 
 CSRF_TRUSTED_ORIGINS = ["https://guyhopkins.net",
-                        "https://lastmansolutions.com",
                         "https://0c54c5c3-9eda-47b4-966a-bab1f7563122-00-2m8208rvsjkn7.kirk.replit.dev"]
 
 # Application definition
@@ -137,11 +134,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
