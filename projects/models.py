@@ -161,19 +161,18 @@ class Photo(models.Model):
 	@property
 	def thumb_path(self):
 		if self.file:
-			# 1. Ask django-imagefield for the raw internal storage path
+			self.file.name = self.file.name.lstrip('/')
 			relative_path = self.file.process('thumb')
-			# 2. Return the absolute server filesystem location
-			return os.path.join(settings.MEDIA_ROOT, relative_path.lstrip('/'))
+
+			return os.path.join(settings.MEDIA_ROOT, relative_path)
 		return None
 
 	@property
 	def desktop_path(self):
 		if self.file:
-			# 1. Ask django-imagefield for the raw internal storage path
-			relative_path = self.file.process('desktop').lstrip('/')
-			# 2. Return the absolute server filesystem location
-			return os.path.join(settings.MEDIA_ROOT, relative_path.lstrip('/'))
+			self.file.name = self.file.name.lstrip('/')
+			relative_path = self.file.process('desktop')
+			return os.path.join(settings.MEDIA_ROOT, relative_path)
 		return None
 
 	@property
