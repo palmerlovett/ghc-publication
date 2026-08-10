@@ -55,6 +55,18 @@ def project(request, project_slug=None):
 
 	child_project = Project.objects.filter(parent_project__project_id=project.project_id).first()
 
+	if project.owner:
+		owners_projects = Project.objects.filter(owner=project.owner).only('title')
+		if owners_projects.count() > 1:
+			project.owner.filter = True
+	if project.second_owner:
+		owners_projects = Project.objects.filter(owner=project.second_owner).only('title')
+		if owners_projects.count() > 1:
+			project.second_owner.filter = True
+	if project.architect_designer:
+		archs_projects = Project.objects.filter(architect_designer=project.architect_designer).only('title')
+		if archs_projects.count() > 1:
+			project.architect_designer.filter = True
 
 
 	context = {
